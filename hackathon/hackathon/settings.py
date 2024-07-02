@@ -48,7 +48,7 @@ for key, value in secrets.items():
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.37.219.221','bojblog.kro.kr','127.0.0.1','localhost']
+ALLOWED_HOSTS = ['3.37.219.221','solver.r-e.kr','127.0.0.1','localhost']
 
 
 
