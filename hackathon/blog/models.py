@@ -39,8 +39,3 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.post.title}"
-
-# class Token(models.Model):
-#     key = models.CharField(max_length=40)
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     created = models.DateTimeField(auto_now_add=True)

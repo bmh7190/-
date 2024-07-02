@@ -14,26 +14,6 @@ from .models import Tag, Post, Comment, Bookmark
 from .serializers import TagSerializer, PostSerializer, CommentSerializer, BookmarkSerializer
 from users.models import User
 
-# class RegisterUser(APIView):
-#     def post(self, request):
-#         username = request.data['username']
-#         password = request.data['password']
-#         email = request.data['email']
-#         user = User.objects.create_user(username=username, password=password, email=email)
-#         token, created = Token.objects.get_or_create(user=user)
-#         return Response({'token': token.key}, status=status.HTTP_201_CREATED)
-
-# class LoginUser(APIView):
-#     def post(self, request):
-#         username = request.data['username']
-#         password = request.data['password']
-#         user = authenticate(request, username=username, password=password)
-#         if user is not None:
-#             token, created = Token.objects.get_or_create(user=user)
-#             return Response({'token': token.key}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
-
 class TagList(APIView):
     def get(self, request):
         tags = Tag.objects.all()

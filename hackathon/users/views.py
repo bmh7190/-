@@ -48,9 +48,16 @@ def login(request):
     return Response({'refresh_token': str(refresh),
                      'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
 
+@api_view(['GET', 'POST'])
+def profile(request):
+    if request.method == 'POST':
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_vaild():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_created)
 
 class ProfileList(APIView):
-    def get(self, request):
+    def get(self):
         profiles = Profile.objects.all()
         serializer = ProfileSerializer(profiles, many=True)
         return Response(serializer.data)
