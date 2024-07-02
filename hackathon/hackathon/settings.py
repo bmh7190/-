@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     # my app
     'blog',
     'users',
+    'util',
     # third-party
     'rest_framework',
     'rest_framework.authtoken',
