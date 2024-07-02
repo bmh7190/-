@@ -1,2 +1,7 @@
 .env/
 hackathon_env
+manage.py
+migrations.py
+__pyache__
+db.sqlite
+secrets.json
