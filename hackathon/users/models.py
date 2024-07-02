@@ -25,7 +25,6 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser):
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     email = models.EmailField(
         verbose_name='이메일',
         max_length=100,

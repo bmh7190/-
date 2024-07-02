@@ -48,13 +48,6 @@ def login(request):
     return Response({'refresh_token': str(refresh),
                      'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
 
-@api_view(['GET', 'POST'])
-def profile(request):
-    if request.method == 'POST':
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_vaild():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_created)
 
 class ProfileList(APIView):
     def get(self):
@@ -70,7 +63,7 @@ class ProfileList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileDetail(APIView):
-    def get(self, request, pk):
+    def get(self, pk): # get, delete request 삭제
         profile = get_object_or_404(Profile, pk=pk)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
@@ -83,7 +76,7 @@ class ProfileDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, pk): 
         profile = get_object_or_404(Profile, pk=pk)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

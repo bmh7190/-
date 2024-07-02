@@ -38,4 +38,4 @@ class Bookmark(models.Model):
     is_bookmarked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username} - {self.post.title}"
+        return f"{self.user.uid} - {self.post.title}"

@@ -5,9 +5,9 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.models import Token
 from django.db.models import Q
-from .models import Tag, Post, Comment, Bookmark,Token
+from .models import Tag, Post, Comment, Bookmark
 from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer
 
 from .models import Tag, Post, Comment, Bookmark
@@ -52,7 +52,7 @@ class PostList(APIView):
         per_pages = int(request.GET.get('PerPages', 3))
         page_number = int(request.GET.get('PageNum', 1))
         is_mine = request.GET.get('isMine', 'false') == 'true'
-        user_uid = request.GET.get('UserUid', None)
+        user_email = request.GET.get('UserEmail', None)
         user = request.user if request.user.is_authenticated else None
 
         post_list = Post.objects.all()
@@ -60,9 +60,9 @@ class PostList(APIView):
         if search_term:
             post_list = post_list.filter(Q(title__icontains=search_term) | Q(content__icontains=search_term))
         #특정 사용자 필터링
-        if user_uid:
-            user_filter = get_object_or_404(User, uid=user_uid)
-            post_list = post_list.filter(user__uid=user_uid)
+        if user_email:
+            user_filter = get_object_or_404(User, email=user_email)
+            post_list = post_list.filter(user=user_filter)
         elif is_mine and user:
             post_list = post_list.filter(author=user)
         paginator = Paginator(post_list, per_pages)
@@ -81,7 +81,7 @@ class PostList(APIView):
         if user:
             for post_data in serialized_data:
                 post_id = post_data['id']
-                post_data['is_bookmarked'] = False
+                post_data['is_bookmarked'] = Bookmark.objects.filter(user=user, post_id=post_id).exists()
 
         #총 페이지수
         return Response({
@@ -149,7 +149,7 @@ class CommentDetail(APIView):
     
 class BookmarkList(APIView):
     def get(self, request):
-        bookmarks = BookMark.objects.all()
+        bookmarks = Bookmark.objects.all()
         serializer = BookmarkSerializer(bookmarks, many=True)
         return Response(serializer.data)
 
@@ -162,12 +162,12 @@ class BookmarkList(APIView):
 
 class BookmarkDetail(APIView):
     def get(self, request, pk):
-        bookmark = get_object_or_404(BookMark, pk=pk)
+        bookmark = get_object_or_404(Bookmark, pk=pk)
         serializer = BookmarkSerializer(bookmark)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        bookmark = get_object_or_404(BookMark, pk=pk)
+        bookmark = get_object_or_404(Bookmark, pk=pk)
         serializer = BookmarkSerializer(bookmark, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -175,6 +175,6 @@ class BookmarkDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
-        bookmark = get_object_or_404(BookMark, pk=pk)
+        bookmark = get_object_or_404(Bookmark, pk=pk)
         bookmark.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
