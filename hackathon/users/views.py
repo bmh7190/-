@@ -1,10 +1,10 @@
-from django.shortcuts import render
+#from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes,APIView
+from rest_framework.decorators import api_view, permission_classes, APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -28,7 +28,6 @@ def signup(request):
         user = serializer.save()
         user.set_password(password)
         user.save()
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -48,9 +47,8 @@ def login(request):
     return Response({'refresh_token': str(refresh),
                      'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
 
-
 class ProfileList(APIView):
-    def get(self):
+    def get(self, request):
         profiles = Profile.objects.all()
         serializer = ProfileSerializer(profiles, many=True)
         return Response(serializer.data)
@@ -63,7 +61,7 @@ class ProfileList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileDetail(APIView):
-    def get(self, pk): # get, delete request 삭제
+    def get(self, request, pk):
         profile = get_object_or_404(Profile, pk=pk)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
@@ -76,7 +74,7 @@ class ProfileDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, pk): 
+    def delete(self, request, pk): 
         profile = get_object_or_404(Profile, pk=pk)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

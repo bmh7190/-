@@ -3,15 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+#from django.contrib.auth import authenticate
 # from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .models import Tag, Post, Comment, Bookmark
 from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer
-
-from .models import Tag, Post, Comment, Bookmark
-from .serializers import TagSerializer, PostSerializer, CommentSerializer, BookmarkSerializer
 from users.models import User
 
 class TagList(APIView):
@@ -64,7 +60,7 @@ class PostList(APIView):
             user_filter = get_object_or_404(User, email=user_email)
             post_list = post_list.filter(user=user_filter)
         elif is_mine and user:
-            post_list = post_list.filter(author=user)
+            post_list = post_list.filter(user=user)
         paginator = Paginator(post_list, per_pages)
 
         try:
@@ -76,17 +72,19 @@ class PostList(APIView):
 
         serializer = PostSerializer(posts, many=True)
 
-        #북마크 여부
+        #북마크 여부 및 본인 글인지 여부
         serialized_data = serializer.data
         if user:
             for post_data in serialized_data:
                 post_id = post_data['id']
                 post_data['is_bookmarked'] = Bookmark.objects.filter(user=user, post_id=post_id).exists()
+                post_data['is_mine'] = post_list.filter(pk=post_id, author=user).exists()
 
-        #총 페이지수
+        #총 페이지수, 전체 게시물 수
         return Response({
             'posts' : serialized_data,
-            'pages' : paginator.num_pages
+            'pages' : paginator.num_pages,
+            'total_count' : paginator.count
         })
 
     def post(self, request):
