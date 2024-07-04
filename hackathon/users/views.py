@@ -416,3 +416,6 @@ def naver_callback(request):
 #     adapter_class = naver_view.NaverOAuth2Adapter
 #     callback_url = NAVER_CALLBACK_URI
 #     client_class = OAuth2Client
+
+
+#되냐?
