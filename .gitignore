@@ -1,18 +1,10 @@
-<<<<<<< HEAD
 .env/
 hackathon_env
 manage.py
 migrations.py
-__pyache__
 db.sqlite
 secrets.json
-=======
-# 시크릿 파일 삭제함
 __pycache__
-hackcthon/secrets.json
 secrets.json
-migrations
-lenv
-db.sqlite3
 .DS_Store
->>>>>>> origin/backend_gayo
+#

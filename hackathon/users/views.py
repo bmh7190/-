@@ -2,7 +2,7 @@ import requests
 
 from django.shortcuts import render,redirect
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy 
 from django.http import JsonResponse
 from json.decoder import JSONDecodeError
 from rest_framework import status
@@ -16,11 +16,22 @@ from allauth.socialaccount.models import SocialAccount
 
 from .models import Profile,User
 
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import update_last_login
+from django.shortcuts import get_object_or_404
+
+from rest_framework.decorators import api_view, permission_classes,APIView
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from users.serializers import UserSerializer,ProfileSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
+    print(request)
     email = request.data.get('email')
     password = request.data.get('password') 
     name = request.data.get('name')
@@ -50,7 +61,7 @@ def login(request):
     update_last_login(None, user)
 
     return Response({'refresh_token': str(refresh),
-                     'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK
+                     'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
 @api_view(['GET'])
 def logout(request):
     response = Response({
@@ -93,8 +104,6 @@ class ProfileDetail(APIView):
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-
-
 
 
 
