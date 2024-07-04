@@ -72,7 +72,7 @@ class PostList(APIView):
 
         serializer = PostSerializer(posts, many=True)
 
-        # 정렬 추가
+        # 정렬 추가!
         if sort_by == 'latest':
             post_list = post_list.order_by('-created_at')
         elif sort_by == 'relevance' and search_term:
