@@ -4,7 +4,6 @@ manage.py
 migrations.py
 db.sqlite
 secrets.json
-__pycache__
+__pycache__/
 secrets.json
 .DS_Store
-#
