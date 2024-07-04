@@ -2,17 +2,10 @@ import requests,json
 
 from django.shortcuts import render,redirect
 from django.conf import settings
-from django.utils.translation import gettext_lazy 
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 from json.decoder import JSONDecodeError
 from rest_framework import status
 from rest_framework.response import Response
-from dj_rest_auth.registration.views import SocialLoginView
-from allauth.socialaccount.providers.google import views as google_view
-from allauth.socialaccount.providers.kakao import views as kakao_view
-
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from allauth.socialaccount.models import SocialAccount
 
 from .models import Profile,User
 
@@ -113,7 +106,7 @@ class ProfileDetail(APIView):
 state = getattr(settings, 'STATE')
 BASE_URL = 'http://solver.r-e.kr/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'users/google/callback/'
-FRONTEND_URL = 'localhost:3000'
+FRONTEND_URL = 'http://localhost:3000'
 def google_login(request):
     """
     Code Request
@@ -130,7 +123,7 @@ def google_callback(request):
     code = request.GET.get('code')
     
     token_req = requests.post(
-        f"https://oauth2.googleapis.com/token?client_id={client_id}&client_secret={client_secret}&code={code}&grant_type=authorization_code&redirect_uri={FRONTEND_URL}&state={state}")
+        f"https://oauth2.googleapis.com/token?client_id={client_id}&client_secret={client_secret}&code={code}&grant_type=authorization_code&redirect_uri={GOOGLE_CALLBACK_URI}&state={state}")
     
     token_req_json = token_req.json()
     error = token_req_json.get("error")
@@ -169,15 +162,16 @@ def google_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
 
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
     
     except User.DoesNotExist:
         user = User.objects.create_user(email=email,name=name)
         user.name = name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -193,17 +187,8 @@ def google_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        response_data = json.dumps(res)
-        return HttpResponse(f"""
-            <script>
-                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
-                window.close();
-            </script>
-        """)
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
 
 # class GoogleLogin(SocialLoginView):
 #     adapter_class = google_view.GoogleOAuth2Adapter
@@ -273,14 +258,15 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
+    
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -296,17 +282,8 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        response_data = json.dumps(res)
-        return HttpResponse(f"""
-            <script>
-                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
-                window.close();
-            </script>
-        """)
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
 
 
 
@@ -405,14 +382,14 @@ def naver_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -432,13 +409,8 @@ def naver_callback(request):
 
         res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
 
-        response_data = json.dumps(res)
-        return HttpResponse(f"""
-            <script>
-                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
-                window.close();
-            </script>
-        """)
+        res["Authorization"] = f"Bearer {access_token}"
+        return HttpResponseRedirect(FRONTEND_URL)
 
 # class NaverLogin(SocialLoginView):
 #     adapter_class = naver_view.NaverOAuth2Adapter
