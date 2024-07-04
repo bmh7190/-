@@ -179,11 +179,17 @@ const SearchResults = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [selectedFilter]); // selectedFilter가 변경될 때마다 fetchPosts를 호출
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`http://solver.r-e.kr/blog/posts?SearchTerm=${searchTerm}`);
+      const filterMap = {
+        '정확도순': 'accuracy',
+        '최신순': 'recent',
+        '오래된순': 'older'
+      };
+      const filterValue = filterMap[selectedFilter];
+      const response = await fetch(`http://solver.r-e.kr/blog/posts?SearchTerm=${searchTerm}&order=${filterValue}`);
       const data = await response.json();
       setPosts(data.posts || []);
     } catch (error) {
@@ -227,7 +233,7 @@ const SearchResults = () => {
               {selectedFilter}
             </FilterButtonStyled>
             <FilterList $isOpen={isFilterOpen} className="list-member">
-              <FilterListItem>
+            <FilterListItem>
                 <FilterListItemButton onClick={() => selectFilter('정확도순')}>정확도순</FilterListItemButton>
               </FilterListItem>
               <FilterListItem>
@@ -240,15 +246,21 @@ const SearchResults = () => {
           </FilterButton>
         </SearchHeader>
         <SearchResultList>
-            {posts.map((post) => (
-              <SearchResultItem key={post.id}>
-                <Link to={`/post/${post.id}`}>
-                  <PostTitle>{post.title}</PostTitle>
-                  <PostMeta>{new Date(post.created_at).toLocaleDateString()}</PostMeta>
-                </Link>
-                <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
-              </SearchResultItem>
-            ))}
+            {
+              posts.length > 0 ? (
+              posts.map((post) => (
+                <SearchResultItem key={post.id}>
+                  <Link to={`/post/${post.id}`}>
+                    <PostTitle>{post.title}</PostTitle>
+                    <PostMeta>{new Date(post.created_at).toLocaleDateString()}</PostMeta>
+                  </Link>
+                  <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
+                </SearchResultItem>
+              ))
+              ): (
+                <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+              )
+            }
           </SearchResultList>
       </SearchWrapper>
     </MainContent>
