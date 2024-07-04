@@ -2,7 +2,6 @@
 hackathon_env
 manage.py
 migrations.py
-db.sqlite
 secrets.json
 __pycache__/
 secrets.json
