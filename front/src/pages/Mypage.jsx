@@ -12,6 +12,7 @@ const ProfileContainer = styled.div`
     display: flex;
     flex-direction: row;
 `;
+
 const ProfileCardContainer = styled.div`
     width: 470px;
     height: 100%;
@@ -23,16 +24,19 @@ const ProfileCardContainer = styled.div`
     background-color: #FBFDFF;
     margin-top: 20px;
 `;
+
 const ProfileBox = styled.div`
     display: flex;
     justify-content: center;
 `;
+
 const ImgBox = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 20px;
     margin-right: 25px;
 `;
+
 const ProfileImg = styled.img`
     background-color: lightgrey;
     width: 200px;
@@ -40,10 +44,12 @@ const ProfileImg = styled.img`
     object-fit: cover;
     border-radius: 50%;
 `;
+
 const ImgButtonBox = styled.div`
     display: flex;
     justify-content: space-between;
-`
+`;
+
 const ImgButton = styled.button`
     width: 70px;
     height: 20px;
@@ -56,6 +62,7 @@ const ImgButton = styled.button`
     cursor: pointer;
     box-shadow: 0px 1px 5px 0px #888;
 `;
+
 const LogOutButton = styled.button`
      width: 70px;
     height: 20px;
@@ -71,19 +78,23 @@ const LogOutButton = styled.button`
     bottom: 0;
     right: 0;
 `;
+
 const HiddenFileInput = styled.input`
   display: none;
 `;
+
 const TextBox = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-bottom: 40px; // Ensure there's enough space for the button
+    padding-bottom: 40px;
 `;
+
 const NameBox = styled.div`
     display:flex;
     flex-direction: row;
 `;
+
 const UserName = styled.h2`
     display:flex;
     flex-direction: row;
@@ -92,6 +103,7 @@ const UserName = styled.h2`
     margin-bottom: 29px;
     width: 100px;
 `;
+
 const ButtonBox = styled.div`
     display: flex;
     align-items: baseline;
@@ -99,6 +111,7 @@ const ButtonBox = styled.div`
     justify-content: space-between;
     margin-bottom: 0;
 `;
+
 const NameButton1 = styled.button`
     text-align: center;
     width: 40px;
@@ -111,6 +124,7 @@ const NameButton1 = styled.button`
     cursor: pointer;
     box-shadow: 0px 1px 5px 0px #888;
 `;
+
 const NameBuuton2 = styled.button`
     text-align: center;
     width: 40px;
@@ -123,27 +137,37 @@ const NameBuuton2 = styled.button`
     cursor: pointer;
     box-shadow: 0px 1px 5px 0px #888;
 `;
+
 const UserEmail = styled.p`
     margin-top: 0;
     word-wrap: break-word;
+    width: 150px;
 `;
+
 const UserState = styled.p`
     margin: 0;
+    width: 150px;
 `;
+
 const BookMarkBox = styled.div`
     display: flex;
     flex-direction: column;
     margin: 30px;
-    height: 300px;
+    height: 200px;
     overflow-y: auto;
 `;
+
 const ContentsList = styled.div`
-    
+    display: flex;
+    flex-direction: column;
 `;
+
 const ButtonBox2 = styled.div`
     display: flex;
     align-items: flex-start;
+    margin-left: 30px;
 `;
+
 const BookMarkButton = styled.button`
     width: 150px;
     height: 35px;
@@ -158,6 +182,11 @@ const BookMarkButton = styled.button`
     &:hover{
         background-color: #90A5CD;
     }
+`;
+
+const ListPostBox = styled.div`
+    margin: 0;
+    padding: 0;
 `;
 
 const CommentButton = styled.button`
@@ -175,12 +204,14 @@ const CommentButton = styled.button`
         background-color: #90A5CD;
     }
 `;
+
 const PostContainer = styled.div`
     width: 400px;
     margin: 30px;
     margin-left: 100px;
     margin-right: 0;
 `;
+
 const PostContainerTitle = styled.p`
     display :inline-block;
     background-color: #90A5CD;
@@ -189,20 +220,24 @@ const PostContainerTitle = styled.p`
     padding: 5px;
     font-size: 17px;
 `;
+
 const PostCardBox = styled.div`
     margin: 20px;
     margin-left: 0;
 `;
+
 const PostCardTitle = styled.h2`
     font-weight: bold;
     margin: 0;
     cursor: pointer;
 `;
-const PostCardDate = styled.p`
+
+const PostDate = styled.p`
     margin: 0;
     color: #5B5858;
     font-size: small;
 `;
+
 const UserNameInput = styled.input`
     font-size: 23px;
     margin-top: 20px;
@@ -212,6 +247,7 @@ const UserNameInput = styled.input`
     width: 90px;
     word-wrap: break-word;
 `;
+
 const MyPage = () => {
     const [MyPosts, setMyPosts] = useState([
         { id: 1, title: '내가 작성한 게시물 제목1', date: '24.00.00' },
@@ -339,35 +375,35 @@ const MyPage = () => {
                         <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
                     </TextBox>
                 </ProfileBox>
-                <BookMarkBox>
                     <ButtonBox2>
                         <BookMarkButton 
                             isActive={activeTab === 'bookmarks'} onClick={() => handleTabClick('bookmarks')}>
                             북마크한 글
                         </BookMarkButton>
-                        <CommentButton 
+                        <CommentButton
                             isActive={activeTab === 'comments'} onClick={() => handleTabClick('comments')}>
                             내가 쓴 댓글
                         </CommentButton>
                     </ButtonBox2>
+                <BookMarkBox>
                     {activeTab === 'bookmarks' && (
                         <ContentsList>
                             {MyBookMark.map((post) => (
-                                <PostCardBox key={post.id} onClick={() => handlePostClick(post.id)}>
+                                <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
                                     <p>{post.title}</p>
-                                    <p>{post.date}</p>
-                                </PostCardBox>
+                                    <PostDate>{post.date}</PostDate>
+                                </ListPostBox>
                             ))}
                         </ContentsList>
                     )}
                     {activeTab === 'comments' && (
                         <ContentsList>
                             {MyComment.map((comment) => (
-                                <PostCardBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
+                                <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
                                     <p>{comment.title}</p>
                                     <p>{comment.text}</p>
-                                    <p>{comment.date}</p>
-                                </PostCardBox>
+                                    <PostDate>{comment.date}</PostDate>
+                                </ListPostBox>
                             ))}
                         </ContentsList>
                     )}
@@ -379,7 +415,7 @@ const MyPage = () => {
                     <PostCardBox 
                     key={post.id} onClick={() => handlePostClick(post.id)}>
                         <PostCardTitle>{post.title}</PostCardTitle> 
-                        <PostCardDate>{post.date}</PostCardDate>
+                        <PostDate>{post.date}</PostDate>
                     </PostCardBox>
                 ))}
             </PostContainer>
