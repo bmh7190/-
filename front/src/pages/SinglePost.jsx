@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
+  max-width: 800px;
+  margin: auto;
+  margin-top: 40px;
   padding: 20px;
   background-color: var(--preset--color--base-2);
   border-radius: 5px;
@@ -18,6 +22,13 @@ const PostHeader = styled.div`
   padding-bottom: 10px;
   border-bottom: 1px solid var(--preset--color--contrast);
   margin-bottom: 20px;
+  margin-top: 20px;
+`;
+
+const BackButton = styled(Link)`
+    font-size: 24px;
+    text-decoration: none;
+    color: black;
 `;
 
 const AuthorProfileImg = styled.img`
@@ -66,6 +77,7 @@ const Attachment = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
+  cursor: pointer;
 
   & img {
     width: 20px;
@@ -94,6 +106,7 @@ const PostcontrolBoxInner = styled.div`
     display: flex;
     max-width: 1200px;
     padding: 10px 20px;
+    gap: 40px;
 `;
 
 const LikeWrap = styled.div`
@@ -107,15 +120,29 @@ const LikeWrap = styled.div`
 `;
 
 const CommentButtonWrap = styled.div`
-  
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    & img {
+      width: 25px;
+      height: 25px;
+    }
 `;
 
-const SearchSinglePost = () => {
+const SinglePost = () => {
   const { postId } = useParams();
+
+  const navigate = useNavigate();
+
+  const handleCommentClick = () => {
+    navigate(`/post/${postId}/comments`); // 적절한 postId와 commentId로 수정하세요.
+  };
 
   return (
     <>
       <Container>
+        <BackButton onClick={() => navigate(-1)}>←</BackButton>
         <PostHeader>
           <AuthorProfileImg />
           <PostTitleWrap>
@@ -131,18 +158,19 @@ const SearchSinglePost = () => {
           <p>입력한 내용~~~~~~~~~~~~~~~~~~~~~~~~</p>
         </PostContent>
         <Attachment>
-          <img src='/attach.png'/>
+          <img alt='attachment icon' src='/attach.png'/>
           <p>파일첨부</p>
         </Attachment>
       </Container>
       <PostControlBox>
         <PostcontrolBoxInner>
           <LikeWrap>
-            <img src='/like-empty.png'/>
+            <img alt='like btn icon' src='/like-empty.png'/>
             <span>1,000</span>
           </LikeWrap>
-          <CommentButtonWrap>
-
+          <CommentButtonWrap onClick={handleCommentClick}>
+            <img alt='comment btn icon' src='/comment.png'/>
+            <span>10</span>
           </CommentButtonWrap>
         </PostcontrolBoxInner>
       </PostControlBox>
@@ -150,4 +178,4 @@ const SearchSinglePost = () => {
   );
 };
 
-export default SearchSinglePost;
+export default SinglePost;

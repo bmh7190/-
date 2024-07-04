@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import '../style.css';
 
@@ -92,6 +93,11 @@ const PostItem = styled.div`
 `;
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/posting')
+  };
+
   const myPosts = [
     { id: 1, title: '작성한 글 제목 1', date: '24.00.00' },
     { id: 2, title: '작성한 글 제목 2', date: '24.00.00' },
@@ -110,7 +116,7 @@ const Sidebar = () => {
         </UserProfile>
         <UserStats>게시글 작성: 20회</UserStats>
         <UserStats>댓글 작성: 20회</UserStats>
-        <PostButton>글쓰기</PostButton>
+        <PostButton onClick={handleClick}>글쓰기</PostButton>
       </WidgetWrap>
       <WidgetWrap className='my-posts-widget'>
         <h3>내가 작성한 글</h3>

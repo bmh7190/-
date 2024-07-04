@@ -1,8 +1,10 @@
-# 시크릿 파일 삭제함
-__pycache__
-hackcthon/secrets.json
+.env/
+hackathon_env
+manage.py
+migrations.py
+db.sqlite
 secrets.json
-migrations
-lenv
-db.sqlite3
+__pycache__
+secrets.json
 .DS_Store
+#

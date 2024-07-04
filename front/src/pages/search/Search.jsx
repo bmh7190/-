@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import SearchSinglePost from './SearchSinglePost';
-import SearchPostComment from './SearchPostComment';
+import SinglePost from '../SinglePost';
+import PostComment from '../PostComment';
 import Sidebar from '../../components/Sidebar';
 
 const Container = styled.div`
@@ -95,7 +95,7 @@ const FilterList = styled.ul`
   width: 100px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+  display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
   list-style: none;
   margin: 0;
   padding: 0;
@@ -171,27 +171,31 @@ const PostMeta = styled.div`
   text-decoration: none;
 `;
 
-const posts = [
-  {
-    id: 1,
-    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
-    date: '2021. 8. 3',
-  },
-  {
-    id: 2,
-    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
-    date: '2021. 8. 3',
-  },
-  {
-    id: 3,
-    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
-    date: '2021. 8. 3',
-  },
-];
-
 const SearchResults = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('정확도순');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(`http://solver.r-e.kr/blog/posts?SearchTerm=${searchTerm}`);
+      const data = await response.json();
+      setPosts(data || []);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setPosts([]);
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchPosts();
+  };
 
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
 
@@ -207,8 +211,13 @@ const SearchResults = () => {
       <SearchWrapper>
         <SearchHeader>
           <SearchBox>
-            <Input type="text" placeholder="검색" />
-            <Button>검색</Button>
+            <Input
+                type="text"
+                placeholder="검색"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button onClick={handleSearch}>검색</Button>
           </SearchBox>
           <FilterButton>
             <FilterButtonStyled
@@ -217,7 +226,7 @@ const SearchResults = () => {
             >
               {selectedFilter}
             </FilterButtonStyled>
-            <FilterList isOpen={isFilterOpen} className="list-member">
+            <FilterList $isOpen={isFilterOpen} className="list-member">
               <FilterListItem>
                 <FilterListItemButton onClick={() => selectFilter('정확도순')}>정확도순</FilterListItemButton>
               </FilterListItem>
@@ -231,16 +240,16 @@ const SearchResults = () => {
           </FilterButton>
         </SearchHeader>
         <SearchResultList>
-          {posts.map((post) => (
-            <SearchResultItem key={post.id}>
-              <Link to={`/search/post/${post.id}`}>
-                <PostTitle>{post.title}</PostTitle>
-                <PostMeta>{post.date}</PostMeta>
-              </Link>
-              <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
-            </SearchResultItem>
-          ))}
-        </SearchResultList>
+            {posts.map((post) => (
+              <SearchResultItem key={post.id}>
+                <Link to={`/post/${post.id}`}>
+                  <PostTitle>{post.title}</PostTitle>
+                  <PostMeta>{new Date(post.created_at).toLocaleDateString()}</PostMeta>
+                </Link>
+                <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
+              </SearchResultItem>
+            ))}
+          </SearchResultList>
       </SearchWrapper>
     </MainContent>
   </SearchContainer>
@@ -252,8 +261,8 @@ const Search = () => {
     <Container>
       <Routes>
         <Route path="/" element={<SearchResults />} />
-        <Route path="post/:postId" element={<SearchSinglePost />} />
-        <Route path="post/:postId/comment/:commentId" element={<SearchPostComment />} />
+        <Route path="/post/:postId" element={<SinglePost />} />
+        <Route path="/post/:postId/comments" element={<PostComment />} />
       </Routes>
     </Container>
   );

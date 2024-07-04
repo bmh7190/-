@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
-  margin-left: 15%;
+  margin: 0 auto;
+  align-items: center;
 `;
 
 const ContentContainer = styled.div`
@@ -48,19 +49,20 @@ const PostsContainerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 1000px; /* Adjust as needed */
-  margin: 0 auto; /* Center horizontally */
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 `;
 
 const PostsContainer = styled.div`
-  width: 1000px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1000px;
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 10px;
-  background-color: #FBFDFF; /* Background color */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Box shadow */
+  background-color: #FBFDFF;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const Post = styled.h2`
@@ -86,12 +88,14 @@ const PostItem = styled.li`
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
-const PostLink = styled.a`
+const PostLink = styled(Link)`
   text-decoration: none;
   color: #000;
-
   &:hover {
     text-decoration: underline;
   }
@@ -108,6 +112,7 @@ const PostDescription = styled.p`
 const MoreButtonContainer = styled.div`
   margin-top: 20px;
   text-align: center;
+  width: 100%;
 `;
 
 const MoreButton = styled.button`
@@ -138,11 +143,38 @@ const SortButton = styled.button`
   }
 `;
 
+const BookMarkIcon = styled.img`
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin-left: 130px;
+`;
+
+const posts = [
+  {
+    id: 1,
+    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
+    date: '2021. 8. 3',
+  },
+  {
+    id: 2,
+    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
+    date: '2021. 8. 3',
+  },
+];
+
 const MainPage = () => {
   const navigate = useNavigate();
+  const [bookmarks, setBookmarks] = useState(posts.map(() => false));
 
-  const handleFindMoreClick = () => {
-    navigate('/finding');
+  const handleBookClick = (index) => {
+    setBookmarks((prev) =>
+      prev.map((bookmark, i) => (i === index ? !bookmark : bookmark))
+    );
+  };
+
+  const handleClick = () => {
+    navigate('/search');  // Ensure the path matches the route in Header
   };
 
   return (
@@ -165,24 +197,23 @@ const MainPage = () => {
               <Post>오늘의 글</Post>
               <SortButton>추천순 ▼</SortButton>
             </PostsHeader>
-            {/* 일단 예시임 */}
-            <PostList> 
-              <PostItem>
-                <PostLink href="https://www.acmicpc.net/problem/1002" target="_blank" rel="noopener noreferrer">
-                  <PostTitle>[백준 알고리즘 1002번] 터렛 C언어 - 나그네의 발자취 - 티스토리</PostTitle>
-                </PostLink>
-                <PostDescription>2020.4.7 - 문제와 테스트 케이스</PostDescription>
-              </PostItem>
-              <PostItem>
-                <PostLink href="https://www.acmicpc.net/problem/1002" target="_blank" rel="noopener noreferrer">
-                  <PostTitle>[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 리하트 - 티스토리</PostTitle>
-                </PostLink>
-                <PostDescription>2020.1.3 - 터렛 각 테스트 케이스</PostDescription>
-              </PostItem>
+            <PostList>
+              {posts.map((post, index) => (
+                <PostItem key={post.id}>
+                  <PostLink to={`/post/${post.id}`}>
+                    <PostTitle>{post.title}</PostTitle>
+                  </PostLink>
+                  <PostDescription>{post.date}</PostDescription>
+                  <BookMarkIcon
+                    src={bookmarks[index] ? "/bookmark-on.png" : "/bookmark.png"}
+                    onClick={() => handleBookClick(index)}
+                  />
+                </PostItem>
+              ))}
             </PostList>
           </PostsContainer>
           <MoreButtonContainer>
-            <MoreButton onClick={handleFindMoreClick}>더 많은 글 찾으러가기</MoreButton>
+            <MoreButton onClick={handleClick}>더 많은 글 찾으러가기</MoreButton>
           </MoreButtonContainer>
         </PostsContainerWrapper>
       </ContentContainer>
