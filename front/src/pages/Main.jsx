@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -105,7 +105,6 @@ const PostTitle = styled.h3`
   margin: 0;
 `;
 
-
 const PostDescription = styled.p`
   margin: 5px 0 0 0;
 `;
@@ -149,9 +148,6 @@ const BookMarkIcon = styled.img`
   height: 40px;
   cursor: pointer;
   margin-left: 130px;
-  &.on {
-    background-image: url("/bookmark-on.png");
-  }
 `;
 
 const posts = [
@@ -169,10 +165,18 @@ const posts = [
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const [bookmarks, setBookmarks] = useState(posts.map(() => false));
+
+  const handleBookClick = (index) => {
+    setBookmarks((prev) =>
+      prev.map((bookmark, i) => (i === index ? !bookmark : bookmark))
+    );
+  };
 
   const handleClick = () => {
     navigate('/Search');
   };
+
   return (
     <MContainer>
       <ContentContainer>
@@ -193,15 +197,17 @@ const MainPage = () => {
               <Post>오늘의 글</Post>
               <SortButton>추천순 ▼</SortButton>
             </PostsHeader>
-            {/* 일단 예시임 */}
             <PostList>
-              {posts.map((post) => (
+              {posts.map((post, index) => (
                 <PostItem key={post.id}>
                   <PostLink to={`/post/${post.id}`}>
                     <PostTitle>{post.title}</PostTitle>
                   </PostLink>
                   <PostDescription>{post.date}</PostDescription>
-                  <BookMarkIcon src="/bookmark.png" />
+                  <BookMarkIcon
+                    src={bookmarks[index] ? "/bookmark-on.png" : "/bookmark.png"}
+                    onClick={() => handleBookClick(index)}
+                  />
                 </PostItem>
               ))}
             </PostList>
