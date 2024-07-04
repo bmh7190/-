@@ -3,8 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-#from django.contrib.auth import authenticate
-# from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .models import Tag, Post, Comment, Bookmark
 from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer
