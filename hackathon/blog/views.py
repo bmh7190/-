@@ -8,6 +8,9 @@ from .models import Tag, Post, Comment, Bookmark
 from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer
 from users.models import User
 
+from rest_framework.decorators import api_view, permission_classes,APIView
+from rest_framework.permissions import AllowAny
+
 class TagList(APIView):
     def get(self, request):
         tags = Tag.objects.all()
@@ -40,7 +43,13 @@ class TagDetail(APIView):
         tag.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+
+
+
 class PostList(APIView):
+    @api_view(['GET'])
+    @permission_classes([AllowAny])
     def get(self, request):
         search_term = request.GET.get('SearchTerm', '')
         per_pages = int(request.GET.get('PerPages', 3))

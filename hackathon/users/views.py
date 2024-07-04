@@ -367,7 +367,6 @@ def naver_callback(request):
 
     if profile_request.status_code == 200:
         profile_json = profile_request.json()
-        print(profile_json)
         error = profile_json.get("error")
         if error is not None:
             raise ValueError(error)
