@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import requests
 
 from django.shortcuts import render,redirect
@@ -16,31 +15,6 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.models import SocialAccount
 
 from .models import Profile,User
-
-=======
-
-from django.shortcuts import render,redirect
-from django.conf import settings
-
-from .models import Profile,User
->>>>>>> origin/backend_gayo
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import update_last_login
-from django.shortcuts import get_object_or_404
-
-<<<<<<< HEAD
-from rest_framework.decorators import api_view, permission_classes,APIView
-=======
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, APIView
->>>>>>> origin/backend_gayo
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
-
-from users.serializers import UserSerializer,ProfileSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-
 
 
 
