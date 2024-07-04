@@ -108,8 +108,7 @@ class ProfileDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
-
-
+#add
 
 state = getattr(settings, 'STATE')
 BASE_URL = 'http://solver.r-e.kr/'
