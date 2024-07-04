@@ -185,7 +185,7 @@ const SearchResults = () => {
     try {
       const response = await fetch(`http://solver.r-e.kr/blog/posts?SearchTerm=${searchTerm}`);
       const data = await response.json();
-      setPosts(data || []);
+      setPosts(data.posts || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
       setPosts([]);
