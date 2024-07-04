@@ -238,6 +238,7 @@ def kakao_callback(request):
     if error is not None:
         raise ValueError(error)
     access_token = token_req_json["access_token"]
+    
     profile_request = requests.get(
         "https://kapi.kakao.com/v2/user/me",
         headers={"Authorization": f"Bearer ${access_token}",})
@@ -258,7 +259,7 @@ def kakao_callback(request):
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
         access_token = str(token.access_token)
-        res = Response(
+        res = JsonResponse(
             {
                 "user": user_serializer.data,
                 "message": "login successs",
@@ -281,7 +282,7 @@ def kakao_callback(request):
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
         access_token = str(token.access_token)
-        res = Response(
+        res = JsonResponse(
             {
                 "user": user_serializer.data,
                 "message": "register successs",
@@ -297,7 +298,9 @@ def kakao_callback(request):
         res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
 
         return res
-    
+
+
+
 # def user_info(request):
 #     try:
 #         access = request.COOKIES['access']
@@ -321,6 +324,8 @@ def kakao_callback(request):
 #             res.set_cookie('access', access)
 #             res.set_cookie('refresh', refresh)
 #             return res
+
+
 # @api_view(['GET'])
 # def kakao_logout(self):
 #     response = Response({
@@ -330,3 +335,98 @@ def kakao_callback(request):
 #     response.delete_cookie("refreshToken")
   
 #     return response
+
+NAVER_CALLBACK_URI = BASE_URL + 'users/naver/callback/'
+
+def naver_login(request):
+    client_id = getattr(settings,"SOCIAL_AUTH_NAVER_CLIENT_ID")
+    return redirect(f"https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={client_id}&state=STATE_STRING&redirect_uri={NAVER_CALLBACK_URI}")
+
+def naver_callback(request):
+    
+    client_id = getattr(settings,"SOCIAL_AUTH_NAVER_CLIENT_ID")
+    client_secret =getattr(settings,"SOCIAL_AUTH_NAVER_SECRET")
+    code = request.GET.get("code")
+    state_string = request.GET.get("state")
+
+    # code로 access token 요청
+    token_request = requests.get(f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id={client_id}&client_secret={client_secret}&code={code}&state={state_string}")
+    token_response_json = token_request.json()
+
+    error = token_response_json.get("error", None)
+    if error is not None:
+        raise JSONDecodeError(error)
+
+    access_token = token_response_json.get("access_token")
+
+    # return JsonResponse({"access_token":access_token})
+
+    # access token으로 네이버 프로필 요청
+    profile_request = requests.post(
+        "https://openapi.naver.com/v1/nid/me",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    if profile_request.status_code == 200:
+        profile_json = profile_request.json()
+        print(profile_json)
+        error = profile_json.get("error")
+        if error is not None:
+            raise ValueError(error)
+        print("profile_json : ",profile_json)
+        user_name = profile_json['response'].get("name")
+        user_email = profile_json["response"].get("email")
+    else:
+        raise ValueError(profile_request.status_code)
+
+    
+    try:
+        user = User.objects.get(email=user_email)
+        user_serializer = UserSerializer(user)
+        token = TokenObtainPairSerializer.get_token(user)
+        refresh_token = str(token)
+        access_token = str(token.access_token)
+        res = JsonResponse(
+            {
+                "user": user_serializer.data,
+                "message": "login successs",
+                "token": {
+                    "access": access_token,
+                    "refresh": refresh_token,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
+
+        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
+        return res
+    except User.DoesNotExist:
+        user = User.objects.create_user(email=user_email,name=user_name)
+        user.name = user_name
+        user.save()
+        user_serializer = UserSerializer(user)
+        token = TokenObtainPairSerializer.get_token(user)
+        refresh_token = str(token)
+        access_token = str(token.access_token)
+        res = JsonResponse(
+            {
+                "user": user_serializer.data,
+                "message": "register successs",
+                "token": {
+                    "access": access_token,
+                    "refresh": refresh_token,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
+
+        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
+
+        return res
+
+# class NaverLogin(SocialLoginView):
+#     adapter_class = naver_view.NaverOAuth2Adapter
+#     callback_url = NAVER_CALLBACK_URI
+#     client_class = OAuth2Client
