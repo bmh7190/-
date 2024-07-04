@@ -118,7 +118,36 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://solver.r-e.kr/users/google/login';
+    const googleLoginUrl = 'http://solver.r-e.kr/users/google/login';
+    const newWindow = window.open(googleLoginUrl, '_blank', 'width=500,height=600');
+  
+    const interval = setInterval(() => {
+      if (newWindow.closed) {
+        clearInterval(interval);
+        // 부모 창에서 데이터를 가져올 수 있다면 처리
+        if (window.handleGoogleLoginResponse) {
+          window.handleGoogleLoginResponse();
+        }
+      }
+    }, 1000);
+  };
+
+  // 메인 페이지에서 응답 데이터를 받아 쿠키를 설정하는 함수
+  window.handleGoogleLoginResponse = async () => {
+    try {
+      const response = await fetch('http://solver.r-e.kr/users/google/callback/');
+      const data = await response.json();
+      if (data.token) {
+        document.cookie = `accessToken=${data.token.access}; path=/; secure; samesite=None`;
+        document.cookie = `refreshToken=${data.token.refresh}; path=/; secure; samesite=None`;
+        // 필요한 추가 처리 (예: 사용자 정보 저장, 페이지 리프레시 등)
+        console.log('로그인 성공:', data);
+      } else {
+        console.error('로그인 실패:', data);
+      }
+    } catch (error) {
+      console.error('로그인 처리 중 오류 발생:', error);
+    }
   };
 
   return (
