@@ -28,12 +28,12 @@ const Container = styled.div`
 
 const SubContainer = styled.div`
   display: flex;
-  gap: 60px;
+  gap: 20px;
 `;
 
 const Content = styled.div`
   flex: 2;
-  padding: 20px;
+  padding-left: 10px;
   display: flex;
   flex-direction: column;
 `;

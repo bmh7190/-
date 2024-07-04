@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { useLocation, Link } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import { useLocation, Link } from 'react-router-dom';
 import '../style.css';
 
 const HeaderContainer = styled.header`
@@ -78,24 +78,24 @@ const Header = () => {
       <Navigation>
         <ul>
           <li>
-            <a href="/" className={path === "/" ? "active" : ""}>
+            <Link to="/" className={path === "/" ? "active" : ""}>
               홈
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/search" className={location.pathname.startsWith('/search') ? "active" : ""}>
+            <Link to="/search" className={path.startsWith('/search') ? "active" : ""}>
               <img alt="search icon" src="/search_icon.png" />찾기
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/posting" className={path === "/posting" ? "active" : ""}>
+            <Link to="/posting" className={path === "/posting" ? "active" : ""}>
               포스팅
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/mypage" className={path === "/mypage" ? "active" : ""}>
+            <Link to="/mypage" className={path === "/mypage" ? "active" : ""}>
               마이페이지
-            </a>
+            </Link>
           </li>
         </ul>
       </Navigation>

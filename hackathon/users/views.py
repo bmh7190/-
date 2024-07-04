@@ -2,7 +2,7 @@ import requests
 
 from django.shortcuts import render,redirect
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy 
 from django.http import JsonResponse
 from json.decoder import JSONDecodeError
 from rest_framework import status
@@ -28,9 +28,6 @@ from users.serializers import UserSerializer,ProfileSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
@@ -47,7 +44,6 @@ def signup(request):
         user = serializer.save()
         user.set_password(password)
         user.save()
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -103,13 +99,11 @@ class ProfileDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, request, pk): 
         profile = get_object_or_404(Profile, pk=pk)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-
-
 
 
 
@@ -431,3 +425,6 @@ def naver_callback(request):
 #     adapter_class = naver_view.NaverOAuth2Adapter
 #     callback_url = NAVER_CALLBACK_URI
 #     client_class = OAuth2Client
+
+
+#되냐?

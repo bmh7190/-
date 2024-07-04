@@ -18,6 +18,8 @@ class Post(models.Model):
     public = models.BooleanField(default=True)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #코드 스니펫 저장
+    code = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -38,9 +40,4 @@ class Bookmark(models.Model):
     is_bookmarked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username} - {self.post.title}"
-
-# class Token(models.Model):
-#     key = models.CharField(max_length=40)
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     created = models.DateTimeField(auto_now_add=True)
+        return f"{self.user.email} - {self.post.title}"
