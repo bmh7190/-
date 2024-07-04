@@ -47,7 +47,9 @@ class PostList(APIView):
         page_number = int(request.GET.get('PageNum', 1))
         is_mine = request.GET.get('isMine', 'false') == 'true'
         user_email = request.GET.get('UserEmail', None)
+        sort_by = request.GET.get('SortBy', 'latest')  # 추가된 부분: 정렬 기준
         user = request.user if request.user.is_authenticated else None
+        
 
         post_list = Post.objects.all()
 
@@ -59,6 +61,30 @@ class PostList(APIView):
             post_list = post_list.filter(user=user_filter)
         elif is_mine and user:
             post_list = post_list.filter(user=user)
+        paginator = Paginator(post_list, per_pages)
+
+        try:
+            posts = paginator.page(page_number)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        serializer = PostSerializer(posts, many=True)
+
+        # 정렬 추가!
+        if sort_by == 'latest':
+            post_list = post_list.order_by('-created_at')
+        elif sort_by == 'relevance' and search_term:
+            post_list = post_list.annotate(
+                search_rank=(
+                    Q(title__icontains=search_term) * 2 +
+                    Q(content__icontains=search_term)
+                )
+            ).order_by('-search_rank', '-created_at')
+        else:
+            post_list = post_list.order_by('-created_at')
+
         paginator = Paginator(post_list, per_pages)
 
         try:

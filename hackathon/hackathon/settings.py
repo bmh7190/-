@@ -93,7 +93,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+   # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -208,7 +208,7 @@ ACCOUNT_USERNAME_REQUIRED = False        # username 필드 사용 x
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 
-GOOGLE_CALLBACK_URI = "http://localhost:8000/users/google/callback/"
+GOOGLE_CALLBACK_URI = "http://solver.r-e.kr/users/google/callback/"
 
 
 CORS_ALLOW_METHODS = [  # 허용할 옵션
