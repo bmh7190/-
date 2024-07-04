@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -166,15 +166,57 @@ const posts = [
 const MainPage = () => {
   const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState(posts.map(() => false));
+  
+  //초기 북마크 목록 가져오기
+  useEffect(() => {
+     const fetchBookmarks = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await fetch('http://solver.r-e.kr/bookmarks', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const result = await response.json();
+          setBookmarks(result.bookmarks);
+        } catch (error) {
+          console.error('북마크 가져오기 실패', error);
+        }
+      }
+    };
 
-  const handleBookClick = (index) => {
-    setBookmarks((prev) =>
-      prev.map((bookmark, i) => (i === index ? !bookmark : bookmark))
-    );
+    fetchBookmarks();
+  }, []);
+
+  //북마크를 클릭할때 호출되는 함수
+  const handleBookClick = async (index) => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다');
+      navigate('/login');
+      return;
+    }
+
+    const newBookmarks = bookmarks.map((bookmark, i) => (i === index ? !bookmark : bookmark));
+    setBookmarks(newBookmarks);
+
+    try {
+      await fetch('http://solver.r-e.kr/bookmarks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ bookmarks: newBookmarks }),
+      });
+    } catch (error) {
+      console.error('북마크 업데이트', error);
+    }
   };
-
+  
   const handleClick = () => {
-    navigate('/search');  // Ensure the path matches the route in Header
+    navigate('/search');
   };
 
   return (
