@@ -131,7 +131,7 @@ def google_callback(request):
     code = request.GET.get('code')
     
     token_req = requests.post(
-        f"https://oauth2.googleapis.com/token?client_id={client_id}&client_secret={client_secret}&code={code}&grant_type=authorization_code&redirect_uri={GOOGLE_CALLBACK_URI}&state={state}")
+        f"https://oauth2.googleapis.com/token?client_id={client_id}&client_secret={client_secret}&code={code}&grant_type=authorization_code&redirect_uri={FRONTEND_URL}&state={state}")
     
     token_req_json = token_req.json()
     error = token_req_json.get("error")
