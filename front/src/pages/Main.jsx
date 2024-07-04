@@ -174,7 +174,7 @@ const MainPage = () => {
   };
 
   const handleClick = () => {
-    navigate('/Search');
+    navigate('/search');  // Ensure the path matches the route in Header
   };
 
   return (
