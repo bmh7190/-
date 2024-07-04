@@ -40,6 +40,10 @@ const ProfileImg = styled.img`
     object-fit: cover;
     border-radius: 50%;
 `;
+const ImgButtonBox = styled.div`
+    display: flex;
+    justify-content: space-between;
+`
 const ImgButton = styled.button`
     width: 70px;
     height: 20px;
@@ -52,12 +56,29 @@ const ImgButton = styled.button`
     cursor: pointer;
     box-shadow: 0px 1px 5px 0px #888;
 `;
+const LogOutButton = styled.button`
+     width: 70px;
+    height: 20px;
+    margin-top: 15px;
+    border-radius: 50px;
+    border-style: none;
+    font-size: 10px;
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    box-shadow: 0px 1px 5px 0px #888;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+`;
 const HiddenFileInput = styled.input`
   display: none;
 `;
 const TextBox = styled.div`
     display: flex;
     flex-direction: column;
+    position: relative;
+    padding-bottom: 40px; // Ensure there's enough space for the button
 `;
 const NameBox = styled.div`
     display:flex;
@@ -118,7 +139,7 @@ const BookMarkBox = styled.div`
 `;
 const ContentsList = styled.div`
     
-`
+`;
 const ButtonBox2 = styled.div`
     display: flex;
     align-items: flex-start;
@@ -267,7 +288,9 @@ const MyPage = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setSelectedImage(URL.createObjectURL(file));
+        if (file) {
+            setSelectedImage(URL.createObjectURL(file));
+        }
     };
 
     const handleButtonClick = () => {
@@ -278,12 +301,17 @@ const MyPage = () => {
         setActiveTab(tab);
     };
 
+    const handleLogoutClick = () => {
+        navigate('/Login');
+    };
+
     return (
         <ProfileContainer>
             <ProfileCardContainer>
                 <ProfileBox>
                     <ImgBox>
                         <ProfileImg src={selectedImage} alt=" " />
+                        <ImgButtonBox>
                         <ImgButton onClick={handleButtonClick}>사진 수정</ImgButton>
                         <HiddenFileInput
                             type="file"
@@ -291,6 +319,7 @@ const MyPage = () => {
                             accept="image/*"
                             onChange={handleFileChange}
                         />
+                        </ImgButtonBox>
                     </ImgBox>
                     <TextBox>
                         <NameBox>
@@ -307,6 +336,7 @@ const MyPage = () => {
                         <UserEmail>example@gmail.com</UserEmail>
                         <UserState>글 작성 : 20회</UserState>
                         <UserState>댓글 작성 : 20회</UserState>
+                        <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
                     </TextBox>
                 </ProfileBox>
                 <BookMarkBox>
