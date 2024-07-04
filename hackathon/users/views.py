@@ -50,8 +50,7 @@ def login(request):
     update_last_login(None, user)
 
     return Response({'refresh_token': str(refresh),
-                     'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
-<<<<<<< HEAD
+                     'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK
 @api_view(['GET'])
 def logout(request):
     response = Response({
@@ -61,8 +60,6 @@ def logout(request):
     response.delete_cookie("refreshToken")
   
     return response
-=======
->>>>>>> origin/backend_gayo
 
 class ProfileList(APIView):
     def get(self, request):
