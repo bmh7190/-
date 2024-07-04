@@ -117,6 +117,10 @@ const BackButton = styled(Link)`
 const Login = () => {
   const navigate = useNavigate();
 
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://solver.r-e.kr/users/google/login';
+  };
+
   return (
     <Container>
       <TitleWrap>
@@ -128,7 +132,7 @@ const Login = () => {
         이메일로 로그인하기
         <img src="/email.png" alt="Email" />
       </EmailLoginButton>
-      <Button className="google-login-btn">
+      <Button className="google-login-btn" onClick={handleGoogleLogin}>
         <img src="/google-logo.png" alt="Google" />
         Google로 시작하기
       </Button>
