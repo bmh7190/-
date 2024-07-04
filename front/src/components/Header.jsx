@@ -88,7 +88,7 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <Link to="/posting" className={path === "/posting" ? "active" : ""}>
+            <Link to="/posting" className={path === "/posting" || path.startsWith('/post') ? "active" : ""}>
               포스팅
             </Link>
           </li>

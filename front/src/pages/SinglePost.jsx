@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const Container = styled.div`
   max-width: 800px;
@@ -132,12 +133,37 @@ const CommentButtonWrap = styled.div`
 
 const SinglePost = () => {
   const { postId } = useParams();
-
   const navigate = useNavigate();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/blog/posts/${postId}/`);
+        setPost(response.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId]);
 
   const handleCommentClick = () => {
-    navigate(`/post/${postId}/comments`); // 적절한 postId와 commentId로 수정하세요.
+    navigate(`/post/${postId}/comments`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading post</div>;
+  }
 
   return (
     <>
@@ -146,21 +172,23 @@ const SinglePost = () => {
         <PostHeader>
           <AuthorProfileImg />
           <PostTitleWrap>
-            <h1>게시물 제목</h1>
+            <h1>{post.title}</h1>
             <PostInfoWrap>
-              <p>아무개왈</p>
-              <p>24.00.00</p>
+              <p>{post.author}</p>
+              <p>{new Date(post.created_at).toLocaleDateString()}</p>
             </PostInfoWrap>
           </PostTitleWrap>
           <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
         </PostHeader>
         <PostContent>
-          <p>입력한 내용~~~~~~~~~~~~~~~~~~~~~~~~</p>
+          {post.content}
         </PostContent>
-        <Attachment>
-          <img alt='attachment icon' src='/attach.png'/>
-          <p>파일첨부</p>
-        </Attachment>
+        {post.attachment && (
+          <Attachment>
+            <img alt='attachment icon' src='/attach.png'/>
+            <p>{post.attachment}</p>
+          </Attachment>
+        )}
       </Container>
       <PostControlBox>
         <PostcontrolBoxInner>

@@ -188,7 +188,6 @@ const SearchResults = () => {
       const filterMap = {
         '관련도순': 'relevance',
         '최신순': 'latest',
-        '오래된순': 'older'
       };
       const filterValue = filterMap[selectedFilter];
       const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
@@ -244,9 +243,6 @@ const SearchResults = () => {
               </FilterListItem>
               <FilterListItem>
                 <FilterListItemButton onClick={() => selectFilter('최신순')}>최신순</FilterListItemButton>
-              </FilterListItem>
-              <FilterListItem>
-                <FilterListItemButton onClick={() => selectFilter('오래된순')}>오래된순</FilterListItemButton>
               </FilterListItem>
             </FilterList>
           </FilterButton>
