@@ -21,7 +21,7 @@ const ProfileCardContainer = styled.div`
     box-shadow: 0px 5px 15px 0px #888;
     border-radius: 30px;
     background-color: #FBFDFF;
-    margin-top: 30px;
+    margin-top: 20px;
 `;
 const ProfileBox = styled.div`
     display: flex;
@@ -38,6 +38,7 @@ const ProfileImg = styled.img`
     width: 200px;
     height: 200px;
     object-fit: cover;
+    border-radius: 50%;
 `;
 const ImgButton = styled.button`
     width: 70px;
@@ -204,9 +205,9 @@ const MyPage = () => {
     ]);
 
     const [MyComment, setMyComment] = useState([
-        { id: 1, title: '댓글 작성한 게시물1', text: '안녕하세요~', date: '24.00.00' },
-        { id: 2, title: '댓글 작성한 게시물2', text: '글 잘보고 갑니다 뭐 어쩌고 저쩌고 내용은 이해가 잘 안가요', date: '24.00.00' },
-        { id: 3, title: '댓글 작성한 게시물3', text: '브2!', date: '24.00.00' },
+        { id: 1, title: '댓글 작성한 게시물1', comments: '안녕하세요~', date: '24.00.00' },
+        { id: 2, title: '댓글 작성한 게시물2', comments: '글 잘보고 갑니다 뭐 어쩌고 저쩌고 내용은 이해가 잘 안가요', date: '24.00.00' },
+        { id: 3, title: '댓글 작성한 게시물3', comments: '브2!', date: '24.00.00' },
     ]);
 
     const [activeTab, setActiveTab] = useState('posts');
@@ -216,7 +217,7 @@ const MyPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [userName, setUserName] = useState('닉네임');
     const [newUserName, setNewUserName] = useState(userName);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState('/defaultImage.png');
 
     useEffect(() => {
         axios
