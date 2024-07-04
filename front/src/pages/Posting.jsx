@@ -33,7 +33,7 @@ const SubContainer = styled.div`
 
 const Content = styled.div`
   flex: 2;
-  padding-left: 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
 `;
@@ -90,11 +90,11 @@ const Button = styled.button`
 `;
 
 const ToggleButton = styled(Button)`
-  background-color: ${({ active }) => (active ? '#007BFF' : '#ccc')};
+  background-color: ${({ active }) => (active ? '#007BFF' : '#ff9999')};
   color: #fff;
 
   &:hover {
-    background-color: ${({ active }) => (active ? '#0056b3' : '#bbb')};
+    background-color: ${({ active }) => (active ? '#0056b3' : '#ff6666')};
   }
 `;
 
