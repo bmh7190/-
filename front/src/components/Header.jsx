@@ -1,13 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import '../style.css';
 
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 20px;
+  padding: 10px 20px;
   background-color: var(--preset--color--base);
   border-bottom: 1px solid var(--preset--color--contrast-2);
 `;
@@ -17,13 +17,9 @@ const Logo = styled.div`
   align-items: center;
 
   img {
-    height: 40px;
-    margin-right: 10px;
-  }
-
-  span {
-    font-size: 24px;
-    font-weight: bold;
+    height: 70px;
+    margin-left: 150px;
+    cursor: pointer;
   }
 `;
 
@@ -75,8 +71,9 @@ const Header = () => {
   return (
     <HeaderContainer className={path || "main"}>
       <Logo>
-        <img src="logo.png" alt="Logo" />
-        <span>LOGO</span>
+        <Link to="/">
+          <img src="/logo.png" alt="Logo" />
+        </Link>
       </Logo>
       <Navigation>
         <ul>
@@ -86,8 +83,8 @@ const Header = () => {
             </a>
           </li>
           <li>
-            <a href="/search" className={path === "/search" ? "active" : ""}>
-              <img src="/search_icon.png" />찾기
+            <a href="/search" className={location.pathname.startsWith('/search') ? "active" : ""}>
+              <img alt="search icon" src="/search_icon.png" />찾기
             </a>
           </li>
           <li>
