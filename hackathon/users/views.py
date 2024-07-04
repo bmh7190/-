@@ -44,7 +44,10 @@ def signup(request):
         user = serializer.save()
         user.set_password(password)
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
 
 @api_view(['POST'])
@@ -109,7 +112,7 @@ class ProfileDetail(APIView):
 
 
 state = getattr(settings, 'STATE')
-BASE_URL = 'http://localhost:8000/'
+BASE_URL = 'http://solver.r-e.kr/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'users/google/callback/'
 
 def google_login(request):
