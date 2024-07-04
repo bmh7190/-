@@ -97,16 +97,34 @@ const RegisterForm = () => {
     };
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
-    formData.append('passwordcheck', passwordcheck);
     if (profileImage) {
       formData.append('profileImage', profileImage);
+    }
+    
+
+    try {
+      const response = await fetch('http://solver.r-e.kr/users/signup', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      alert('회원가입이 완료되었습니다!');
+      navigate('/login');  // Redirect to login page after successful registration
+    } catch (error) {
+      console.error('There was a problem with the registration request:', error);
+      alert('회원가입에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
