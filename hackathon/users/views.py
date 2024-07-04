@@ -170,6 +170,8 @@ def google_callback(request):
         user = User.objects.create_user(email=email,name=name)
         user.name = name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -263,6 +265,8 @@ def kakao_callback(request):
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -384,6 +388,8 @@ def naver_callback(request):
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
