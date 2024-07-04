@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from .models import Tag, Post, Comment,Bookmark
 
 class TagSerializer(serializers.ModelSerializer):
@@ -10,6 +10,10 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

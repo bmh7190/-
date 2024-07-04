@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import requests
 
 from django.shortcuts import render,redirect
@@ -16,11 +17,23 @@ from allauth.socialaccount.models import SocialAccount
 
 from .models import Profile,User
 
+=======
+
+from django.shortcuts import render,redirect
+from django.conf import settings
+
+from .models import Profile,User
+>>>>>>> origin/backend_gayo
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 from django.shortcuts import get_object_or_404
 
+<<<<<<< HEAD
 from rest_framework.decorators import api_view, permission_classes,APIView
+=======
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes, APIView
+>>>>>>> origin/backend_gayo
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -46,7 +59,6 @@ def signup(request):
         user = serializer.save()
         user.set_password(password)
         user.save()
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -65,6 +77,7 @@ def login(request):
 
     return Response({'refresh_token': str(refresh),
                      'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
+<<<<<<< HEAD
 @api_view(['GET'])
 def logout(request):
     response = Response({
@@ -74,6 +87,8 @@ def logout(request):
     response.delete_cookie("refreshToken")
   
     return response
+=======
+>>>>>>> origin/backend_gayo
 
 class ProfileList(APIView):
     def get(self, request):
@@ -102,7 +117,7 @@ class ProfileDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, request, pk): 
         profile = get_object_or_404(Profile, pk=pk)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
