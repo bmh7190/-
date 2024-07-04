@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import SinglePost from '../SinglePost';
 import PostComment from '../PostComment';
 import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
+import { API_BASE_URL } from '../../config';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -173,7 +175,7 @@ const PostMeta = styled.div`
 
 const SearchResults = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('정확도순');
+  const [selectedFilter, setSelectedFilter] = useState('관련도순');
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState([]);
 
@@ -184,14 +186,18 @@ const SearchResults = () => {
   const fetchPosts = async () => {
     try {
       const filterMap = {
-        '정확도순': 'accuracy',
-        '최신순': 'recent',
+        '관련도순': 'relevance',
+        '최신순': 'latest',
         '오래된순': 'older'
       };
       const filterValue = filterMap[selectedFilter];
-      const response = await fetch(`http://solver.r-e.kr/blog/posts?SearchTerm=${searchTerm}&order=${filterValue}`);
-      const data = await response.json();
-      setPosts(data.posts || []);
+      const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
+        params: {
+          SearchTerm: searchTerm,
+          SortBy: filterValue,
+        },
+      });
+      setPosts(response.data.posts || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
       setPosts([]);
@@ -234,7 +240,7 @@ const SearchResults = () => {
             </FilterButtonStyled>
             <FilterList $isOpen={isFilterOpen} className="list-member">
             <FilterListItem>
-                <FilterListItemButton onClick={() => selectFilter('정확도순')}>정확도순</FilterListItemButton>
+                <FilterListItemButton onClick={() => selectFilter('관련도순')}>관련도순</FilterListItemButton>
               </FilterListItem>
               <FilterListItem>
                 <FilterListItemButton onClick={() => selectFilter('최신순')}>최신순</FilterListItemButton>

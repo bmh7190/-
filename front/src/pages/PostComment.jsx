@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { API_BASE_URL } from '../config';
+import axios from 'axios';
 
 const Container = styled.div`
   max-width: 800px;
@@ -128,26 +130,57 @@ const SubmitButton = styled.button`
   }
 `;
 
-const comments = [
-  { id: 1, author: '아무개왈', content: '안녕하세요~', date: '24.00.00(업로드일)' },
-  { id: 2, author: '아무개왈2', content: '글 잘보고 갑니다 뭐 어쩌고 저쩌고 내용은 이해가 잘 안가요', date: '24.00.00(업로드일)' },
-  { id: 3, author: '아무개왈3', content: '브2!', date: '24.00.00(업로드일)' },
-  { id: 4, author: '아무개왈4', content: '좋은 글 감사합니다!', date: '24.00.00(업로드일)' },
-];
-
 const PostComment = () => {
   const { postId } = useParams();
+  const [comments, setComments] = useState([]);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [commentCount, setCommentCount] = useState(0);
+
+  useEffect(() => {
+    // 댓글 목록을 가져오는 함수
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/blog/comments?postId=${postId}`);
+        setComments(response.data);
+        setCommentCount(response.data.length);
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   const handleWriteCommentClick = () => {
     setIsCommentFormOpen(!isCommentFormOpen);
+  };
+
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleCommentSubmit = async () => {
+    try {
+      const response = await axios.post('http://solver.r-e.kr/blog/comments', {
+        postId,
+        content: newComment,
+      });
+
+      setComments([...comments, response.data]);
+      setCommentCount(commentCount + 1);
+      setNewComment('');
+      setIsCommentFormOpen(false);
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+    }
   };
 
   return (
     <Container>
       <Header>
         <BackButton to={`/post/${postId}`}>←</BackButton>
-        <CommentCount>댓글 <span>12</span></CommentCount>
+        <CommentCount>댓글 <span>{commentCount}</span></CommentCount>
       </Header>
       <CommentList>
         {comments.map((comment) => (
@@ -163,8 +196,12 @@ const PostComment = () => {
       </CommentList>
       <WriteCommentButton onClick={handleWriteCommentClick}>댓글 쓰기</WriteCommentButton>
       <CommentForm isOpen={isCommentFormOpen}>
-        <TextArea placeholder="댓글을 입력하세요..." />
-        <SubmitButton>등록</SubmitButton>
+        <TextArea 
+          value={newComment} 
+          onChange={handleCommentChange} 
+          placeholder="댓글을 입력하세요..." 
+        />
+        <SubmitButton onClick={handleCommentSubmit}>등록</SubmitButton>
       </CommentForm>
     </Container>
   );
