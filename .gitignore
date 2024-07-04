@@ -1,4 +1,4 @@
-# 올리지 않을 목록
+# 시크릿 파일 삭제함
 __pycache__
 hackcthon/secrets.json
 secrets.json
