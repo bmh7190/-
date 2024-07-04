@@ -1,4 +1,8 @@
-#from django.shortcuts import render
+
+from django.shortcuts import render,redirect
+from django.conf import settings
+
+from .models import Profile,User
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 from django.shortcuts import get_object_or_404
