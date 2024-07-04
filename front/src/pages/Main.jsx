@@ -107,6 +107,7 @@ const PostTitle = styled.h3`
 
 const PostDescription = styled.p`
   margin: 5px 0 0 0;
+  padding-right: 80px;
 `;
 
 const MoreButtonContainer = styled.div`
@@ -150,26 +151,24 @@ const BookMarkIcon = styled.img`
   margin-left: 130px;
 `;
 
-const posts = [
-  {
-    id: 1,
-    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
-    date: '2021. 8. 3',
-  },
-  {
-    id: 2,
-    title: '[C] 백준 1002번 터렛 - 초보 개발자의 이야기, 깃허브',
-    date: '2021. 8. 3',
-  },
-];
-
 const MainPage = () => {
   const navigate = useNavigate();
-  const [bookmarks, setBookmarks] = useState(posts.map(() => false));
+  const [posts, setPosts] = useState([]);
+  const [bookmarks, setBookmarks] = useState([]);
   
-  //초기 북마크 목록 가져오기
   useEffect(() => {
-     const fetchBookmarks = async () => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('http://solver.r-e.kr/blog/posts');
+        const data = await response.json();
+        setPosts(data.posts || []);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setPosts([]);
+      }
+    };
+
+    const fetchBookmarks = async () => {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
@@ -179,17 +178,17 @@ const MainPage = () => {
             },
           });
           const result = await response.json();
-          setBookmarks(result.bookmarks);
+          setBookmarks(result.bookmarks || []);
         } catch (error) {
           console.error('북마크 가져오기 실패', error);
         }
       }
     };
 
+    fetchPosts();
     fetchBookmarks();
   }, []);
 
-  //북마크를 클릭할때 호출되는 함수
   const handleBookClick = async (index) => {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -237,7 +236,7 @@ const MainPage = () => {
           <PostsContainer>
             <PostsHeader>
               <Post>오늘의 글</Post>
-              <SortButton>추천순 ▼</SortButton>
+              <SortButton>최신순 ▼</SortButton>
             </PostsHeader>
             <PostList>
               {posts.map((post, index) => (
@@ -245,7 +244,7 @@ const MainPage = () => {
                   <PostLink to={`/post/${post.id}`}>
                     <PostTitle>{post.title}</PostTitle>
                   </PostLink>
-                  <PostDescription>{post.date}</PostDescription>
+                  <PostDescription>{new Date(post.created_at).toLocaleDateString()}</PostDescription>
                   <BookMarkIcon
                     src={bookmarks[index] ? "/bookmark-on.png" : "/bookmark.png"}
                     onClick={() => handleBookClick(index)}
@@ -264,3 +263,4 @@ const MainPage = () => {
 };
 
 export default MainPage;
+
