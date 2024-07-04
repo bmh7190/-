@@ -34,6 +34,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
+    print(request)
     email = request.data.get('email')
     password = request.data.get('password') 
     name = request.data.get('name')

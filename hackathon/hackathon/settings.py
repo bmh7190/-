@@ -233,11 +233,12 @@ CORS_ALLOW_HEADERS = [  # 허용할 헤더
 
 CORS_ALLOW_CREDENTIALS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://solver.r-e.kr",
-#     "http://localhost:8080",
-#     "http://127.0.0.1:9000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://solver.r-e.kr",
+    "http://localhost:8000",
+    "http://127.0.0.1:9000",
+    "http://localhost:3000",
+]
 
 # # 1-2) 정규표현식
 # CORS_ALLOWED_ORIGIN_REGEXES = [
