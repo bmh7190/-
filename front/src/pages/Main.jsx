@@ -88,9 +88,9 @@ const PostItem = styled.li`
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
-  display: flex; /* Flexbox로 설정하여 요소들을 가로 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: space-between; /* 요소들 사이의 간격을 최대화 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const PostLink = styled(Link)`
@@ -174,7 +174,7 @@ const MainPage = () => {
   };
 
   const handleClick = () => {
-    navigate('/Search');
+    navigate('/search');  // Ensure the path matches the route in Header
   };
 
   return (
