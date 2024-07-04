@@ -48,8 +48,7 @@ class TagDetail(APIView):
 
 
 class PostList(APIView):
-    @api_view(['GET'])
-    @permission_classes([AllowAny])
+    permission_classes = [AllowAny]
     def get(self, request):
         search_term = request.GET.get('SearchTerm', '')
         per_pages = int(request.GET.get('PerPages', 3))
