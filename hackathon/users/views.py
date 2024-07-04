@@ -1,9 +1,9 @@
-import requests
+import requests,json
 
 from django.shortcuts import render,redirect
 from django.conf import settings
 from django.utils.translation import gettext_lazy 
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from json.decoder import JSONDecodeError
 from rest_framework import status
 from rest_framework.response import Response
@@ -114,7 +114,7 @@ class ProfileDetail(APIView):
 state = getattr(settings, 'STATE')
 BASE_URL = 'http://solver.r-e.kr/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'users/google/callback/'
-
+FRONTEND_URL = 'localhost:3000'
 def google_login(request):
     """
     Code Request
@@ -198,7 +198,13 @@ def google_callback(request):
 
         res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
 
-        return res
+        response_data = json.dumps(res)
+        return HttpResponse(f"""
+            <script>
+                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
+                window.close();
+            </script>
+        """)
 
 # class GoogleLogin(SocialLoginView):
 #     adapter_class = google_view.GoogleOAuth2Adapter
@@ -295,7 +301,13 @@ def kakao_callback(request):
 
         res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
 
-        return res
+        response_data = json.dumps(res)
+        return HttpResponse(f"""
+            <script>
+                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
+                window.close();
+            </script>
+        """)
 
 
 
@@ -421,7 +433,13 @@ def naver_callback(request):
 
         res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
 
-        return res
+        response_data = json.dumps(res)
+        return HttpResponse(f"""
+            <script>
+                window.opener.postMessage('{response_data}', '{settings.FRONTEND_URL}');
+                window.close();
+            </script>
+        """)
 
 # class NaverLogin(SocialLoginView):
 #     adapter_class = naver_view.NaverOAuth2Adapter
