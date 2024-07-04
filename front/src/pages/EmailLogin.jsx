@@ -67,9 +67,39 @@ const EmailLogin = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 로그인 처리 로직
+
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await fetch('http://solver.r-e.kr/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response status:', response.status);
+        console.error('Response text:', errorText);
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      localStorage.setItem('access_token', result.access_token);
+      localStorage.setItem('refresh_token', result.refresh_token);
+      alert('로그인이 완료되었습니다!');
+      navigate('/');  // Redirect to root after successful login
+    } catch (error) {
+      console.error('There was a problem with the login request:', error);
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (

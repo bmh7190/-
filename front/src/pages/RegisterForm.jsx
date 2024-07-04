@@ -100,22 +100,30 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    if (profileImage) {
-      formData.append('profileImage', profileImage);
+    if (password !== passwordcheck) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
     }
-    
+
+    const data = {
+      name: name,
+      email: email,
+      password: password,
+    };
 
     try {
       const response = await fetch('http://solver.r-e.kr/users/signup', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response status:', response.status);
+        console.error('Response text:', errorText);
         throw new Error('Network response was not ok');
       }
 
