@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'corsheaders',
 
     'allauth',
     'allauth.account',
@@ -88,6 +89,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -205,3 +207,42 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 
 GOOGLE_CALLBACK_URI = "http://localhost:8000/users/google/callback/"
+
+
+CORS_ALLOW_METHODS = [  # 허용할 옵션
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [  # 허용할 헤더
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://solver.r-e.kr",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]
+
+# 1-2) 정규표현식
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://solver\.r-e\.kr$",
+
+]
+
+# 2) 모든 출처 지정
+CORS_ALLOW_ALL_ORIGINS: False
