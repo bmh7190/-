@@ -161,7 +161,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://solver.r-e.kr/blog/posts');
+        const response = await axios.get(`${API_BASE_URL}/blog/posts`);
         setPosts(response.data.posts || []);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -201,7 +201,7 @@ const MainPage = () => {
     setBookmarks(newBookmarks);
 
     try {
-      await axios.post('http://solver.r-e.kr/bookmarks', { bookmarks: newBookmarks }, {
+      await axios.post(`${API_BASE_URL}/bookmarks`, { bookmarks: newBookmarks }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
