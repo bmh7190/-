@@ -9,6 +9,7 @@ import 'highlight.js/styles/github.css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import xml from 'highlight.js/lib/languages/xml';
+import { API_BASE_URL } from '../config';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('python', python);
@@ -190,7 +191,7 @@ const Posting = () => {
         formData.append('file', file);
       }
 
-      const response = await fetch('백엔드 예시', {
+      const response = await fetch(`${API_BASE_URL}/blog`, {
         method: 'POST',
         body: formData,
       });
