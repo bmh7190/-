@@ -41,9 +41,8 @@ const UserProfile = styled.div`
 `;
 
 const UserProfileImg = styled.img`
-    background-color: #cdcdcd;
-    width: 55px;
-    height: 55px;
+    width: 70px;
+    height: 70px;
 `;
 
 const UserTitle = styled.div`
@@ -151,7 +150,7 @@ const Sidebar = () => {
         {userProfile ? (
           <>
             <UserProfile>
-              <UserProfileImg src={userProfile.profile_image || '/default_profile.png'} />
+              <UserProfileImg src='/defaultImage.png' />
               <UserTitle>
                 <UserName>{localStorage.getItem('userName') || '닉네임'}</UserName>
                 <UserEmail>{userProfile.email}</UserEmail>
