@@ -172,7 +172,13 @@ const PostComment = () => {
     try {
       const response = await axiosInstance.post(
         `/blog/comments/`,
-        { post: postId, content: newComment }
+        { 
+          headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          post: postId, 
+          content: newComment 
+        }
       );
 
       setComments([...comments, response.data]);
