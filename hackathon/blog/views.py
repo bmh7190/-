@@ -259,6 +259,8 @@ class BookmarkList(APIView):
         user = get_object_or_404(User, pk=user_id)
         if user:
             bookmarks = Bookmark.objects.filter(user=user)
+            if not bookmarks.exists():
+                return Response([0])
         else:
             bookmarks = Bookmark.objects.none() 
         serializer = BookmarkSerializer(bookmarks, many=True)
@@ -271,7 +273,7 @@ class ToggleBookmark(APIView):
         user_id = request.data.get('user_id')
         post_id = request.data.get('post_id')
         
-        user = get_object_or_404(User,pk=user_id)
+        user = get_object_or_404(User, pk=user_id)
         post = get_object_or_404(Post, pk=post_id)
 
         bookmark, created = Bookmark.objects.get_or_create(user=user, post=post)
