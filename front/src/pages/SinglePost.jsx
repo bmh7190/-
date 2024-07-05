@@ -137,6 +137,7 @@ const SinglePost = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -151,6 +152,19 @@ const SinglePost = () => {
     };
 
     fetchPost();
+  }, [postId]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/blog/comments?postId=${postId}`);
+        setCommentCount(response.data.length);
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+      }
+    };
+
+    fetchComments();
   }, [postId]);
 
   const handleCommentClick = () => {
@@ -198,7 +212,7 @@ const SinglePost = () => {
           </LikeWrap>
           <CommentButtonWrap onClick={handleCommentClick}>
             <img alt='comment btn icon' src='/comment.png'/>
-            <span>10</span>
+            <span>{commentCount}</span>
           </CommentButtonWrap>
         </PostcontrolBoxInner>
       </PostControlBox>
