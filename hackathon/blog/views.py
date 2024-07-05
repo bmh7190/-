@@ -204,7 +204,7 @@ class CommentDetail(APIView):
 
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        
+        user_id = request.data.get('user')
         post_id = request.data.get('post_id')
         content = request.data.get('content')
 
@@ -213,9 +213,9 @@ class CommentDetail(APIView):
         
         # Get the post object
         post = get_object_or_404(Post, id=post_id)
-        
+        user = get_object_or_404(User, id = user_id)
         # Create a new comment
-        comment = Comment.objects.create(post=post, content=content, user=user)
+        comment = Comment.objects.create(post=post, content=content, User=user)
         
         return Response({
             'id': comment.id,
