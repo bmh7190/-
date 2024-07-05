@@ -148,6 +148,14 @@ const Login = () => {
     window.location.href = `${API_BASE_URL}/users/google/login`;
   };
 
+  const handleKakaoLogin = () => {
+    window.location.href = `${API_BASE_URL}/users/google/login`;
+  };
+
+  const handleNaverLogin = () => {
+    window.location.href = `${API_BASE_URL}/users/google/login`;
+  };
+
   return (
     <Container>
       <TitleWrap>
@@ -163,11 +171,11 @@ const Login = () => {
         <img src="/google-logo.png" alt="Google" />
         Google로 시작하기
       </Button>
-      <Button className="kakao-login-btn">
+      <Button className="kakao-login-btn" onClick={handleKakaoLogin}>
         <img src="/kakao-logo.png" alt="Kakao" />
         카카오로 시작하기
       </Button>
-      <Button className="naver-login-btn">
+      <Button className="naver-login-btn" onClick={handleNaverLogin}>
         <img src="/naver-logo.png" alt="Naver" />
         네이버로 시작하기
       </Button>
