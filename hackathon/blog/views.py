@@ -120,12 +120,20 @@ class PostList(APIView):
         })
 
     def post(self, request):
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        post = Post(
+        title = request.data.get('title'),
+        content = request.data.get('content'),
+        number = request.data.get('number') ,
+        link = request.data.get('link') ,
+        public = request.data.get('public'), 
+        tag = request.data.get('tag')
+        )
 
+        post.save()
+        message = f"id: {post.pk}번 포스트 생성 성공"
+        return Response(data = None, message = message, status = status.HTTP_201_CREATED)
+        
+    
 class PostDetail(APIView):
 
     def get_permissions(self):

@@ -12,11 +12,11 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    content = models.TextField()
-    number = models.IntegerField()
-    link = models.URLField()
+    content = models.TextField(null=True)
+    number = models.IntegerField(null=True)
+    link = models.URLField(null=True)
     public = models.BooleanField(default=True)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, null=True,on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
