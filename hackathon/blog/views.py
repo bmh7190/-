@@ -253,3 +253,17 @@ class BookmarkDetail(APIView):
         bookmark = get_object_or_404(Bookmark, pk=pk)
         bookmark.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    def patch(self, request, pk):
+        bookmark = get_object_or_404(Bookmark, pk=pk)
+        bookmark.is_bookmarked = not bookmark.is_bookmarked
+        bookmark.save()
+        serializer = BookmarkSerializer(bookmark)
+        return Response(serializer.data)
+
+class CheckBookmark(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, post_id):
+        user = request.user
+        is_bookmarked = Bookmark.objects.filter(post_id=post_id, user=user).exists()
+        return Response({'is_bookmarked': is_bookmarked}, status=status.HTTP_200_OK)
