@@ -190,7 +190,7 @@ const Posting = () => {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
-      formData.append('Tag', category);
+      formData.append('tag_id', category);
       formData.append('number', solutionNumber);
       formData.append('link', link);
       formData.append('public', Public ? "True" : "False");

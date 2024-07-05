@@ -120,8 +120,8 @@ class PostList(APIView):
         })
 
     def post(self, request):
-        user_id = request.data.get('user_id')
-        tag_id = request.data.get('tag_id'),
+        user_id = int(request.data.get('user_id'))
+        tag_id = int(request.data.get('tag_id'))
         user= get_object_or_404(User, pk =user_id)
         tag = get_object_or_404(Tag, pk = tag_id)
         
@@ -137,7 +137,7 @@ class PostList(APIView):
 
         post.save()
         message = f"id: {post.pk}번 포스트 생성 성공"
-        return Response(data = None, message = message, status = status.HTTP_201_CREATED)
+        return Response(data = None, status = status.HTTP_201_CREATED)
         
     
 class PostDetail(APIView):
