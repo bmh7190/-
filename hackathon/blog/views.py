@@ -254,7 +254,6 @@ class CommentDetail(APIView):
     
 class BookmarkList(APIView):
     #user의 북마크한 리스트
-
     def get(self, request):
         user_id = request.GET.get("user_id")
         user = get_object_or_404(User, pk=user_id)
@@ -269,8 +268,8 @@ class ToggleBookmark(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self,request):
-        user_id = int(request.data.get('user_id'))
-        post_id = int(request.data.get('post_id'))
+        user_id = request.data.get('user_id')
+        post_id = request.data.get('post_id')
         
         user = get_object_or_404(User,pk=user_id)
         post = get_object_or_404(Post, pk=post_id)
