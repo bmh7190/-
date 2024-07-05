@@ -162,10 +162,15 @@ const PostComment = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      const response = await axios.post('http://solver.r-e.kr/blog/comments', {
-        postId,
-        content: newComment,
-      });
+      const response = await axios.put(
+        `${API_BASE_URL}/blog/comments/${postId}/`,
+        { content: newComment },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        }
+      );
 
       setComments([...comments, response.data]);
       setCommentCount(commentCount + 1);
