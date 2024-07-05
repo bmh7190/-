@@ -163,6 +163,7 @@ const Posting = () => {
   const [Public, setPublic] = useState(true);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
+  const [solutionNumber, setSolutionNumber] = useState('');
   const [content, setContent] = useState('');
   const [file, setFile] = useState(null);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -185,6 +186,7 @@ const Posting = () => {
       formData.append('post_title', title);
       formData.append('content', content);
       formData.append('number', category);
+      formData.append('solution_number', solutionNumber);
       formData.append('public', Public);
 
       if (file) {
@@ -220,12 +222,13 @@ const Posting = () => {
             <PostContainer>
               <h2>글쓰기</h2>
               <Form onSubmit={handleSubmit}>
-                <Label htmlFor="title">제목을 입력해 주세요.</Label>
+                <Label htmlFor="title">제목</Label>
                 <Input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  placeholder="제목을 입력해주세요."
                   required
                 />
                 <Label htmlFor="category">카테고리 선택</Label>
@@ -234,6 +237,16 @@ const Posting = () => {
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
+                  placeholder="문제 유형 카테고리를 입력해 주세요."
+                  required
+                />
+                <Label htmlFor="solutionNumber">번호 입력</Label>
+                <Input
+                  type="text"
+                  id="solutionNumber"
+                  value={solutionNumber}
+                  onChange={(e) => setSolutionNumber(e.target.value)}
+                  placeholder="작성하는 문제의 번호만 입력해주세요."
                   required
                 />
                 <Label htmlFor="content">내용을 입력해 주세요.</Label>
