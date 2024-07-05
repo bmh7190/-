@@ -127,7 +127,7 @@ const Login = () => {
     if (access && refresh) {
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
-      //navigate('/');
+      navigate('/');
     }
   }, [location, navigate]);
 

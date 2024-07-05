@@ -103,7 +103,7 @@ const Sidebar = () => {
     const fetchProfile = async () => {
       try {
         const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
-        const response = await axios.get(`${API_BASE_URL}/users/profile/${userId}/`, {
+        const response = await axios.get(`${API_BASE_URL}/users/profiles/${userId}/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           }
@@ -116,15 +116,16 @@ const Sidebar = () => {
 
     const fetchMyPosts = async () => {
       try {
+        const token = localStorage.getItem('accessToken');
         const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             isMine: true,
-            PerPages: 3,
+            PerPages: 6,
             PageNum: 1,
           },
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
         });
         setMyPosts(response.data.posts || []);
       } catch (error) {
