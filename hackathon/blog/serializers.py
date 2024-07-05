@@ -26,20 +26,9 @@ class BookmarkSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer2(serializers.Serializer):
-    post_id = serializers.IntegerField()
-    content = serializers.CharField(max_length=200)
+    user = serializers.ReadOnlyField(source='user.username')
+    post_id = serializers.IntegerField(write_only=True)  # post_id를 write-only 필드로 추가합니다.
 
-    def create(self, validated_data):
-        """
-        Create and return a new Comment instance, given the validated data.
-        """
-        return Comment.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing Comment instance, given the validated data.
-        """
-        instance.post_id = validated_data.get('post_id', instance.post_id)
-        instance.content = validated_data.get('content', instance.content)
-        instance.save()
-        return instance
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post_id']
