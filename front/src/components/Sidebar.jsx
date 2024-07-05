@@ -123,7 +123,7 @@ const Sidebar = () => {
           },
           params: {
             isMine: true,
-            PerPages: 100,
+            PerPages: 8,
             PageNum: 1,
           },
         });
