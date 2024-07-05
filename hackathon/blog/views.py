@@ -202,10 +202,8 @@ class CommentList(APIView):
 # 
 class CommentDetail(APIView):
 
+    permission_classes = [IsAuthenticated]
     def post(self, request):
-        user = request.user if request.user.is_authenticated else None
-        if user is None:
-            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
         
         post_id = request.data.get('post_id')
         content = request.data.get('content')
