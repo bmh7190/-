@@ -1,18 +1,11 @@
-import requests
+import requests,json
 
 from django.shortcuts import render,redirect
 from django.conf import settings
-from django.utils.translation import gettext_lazy 
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 from json.decoder import JSONDecodeError
 from rest_framework import status
 from rest_framework.response import Response
-from dj_rest_auth.registration.views import SocialLoginView
-from allauth.socialaccount.providers.google import views as google_view
-from allauth.socialaccount.providers.kakao import views as kakao_view
-
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from allauth.socialaccount.models import SocialAccount
 
 from .models import Profile,User
 
@@ -108,13 +101,12 @@ class ProfileDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
-
-
+#add
 
 state = getattr(settings, 'STATE')
 BASE_URL = 'http://solver.r-e.kr/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'users/google/callback/'
-
+FRONTEND_URL = 'http://localhost:3000'
 def google_login(request):
     """
     Code Request
@@ -170,15 +162,16 @@ def google_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
 
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
     
     except User.DoesNotExist:
         user = User.objects.create_user(email=email,name=name)
         user.name = name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -194,11 +187,8 @@ def google_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        return res
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
 
 # class GoogleLogin(SocialLoginView):
 #     adapter_class = google_view.GoogleOAuth2Adapter
@@ -268,14 +258,15 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
+    
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -291,11 +282,8 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        return res
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
 
 
 
@@ -367,7 +355,6 @@ def naver_callback(request):
 
     if profile_request.status_code == 200:
         profile_json = profile_request.json()
-        print(profile_json)
         error = profile_json.get("error")
         if error is not None:
             raise ValueError(error)
@@ -395,14 +382,15 @@ def naver_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-        return res
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
+    
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
         user.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         user_serializer = UserSerializer(user)
         token = TokenObtainPairSerializer.get_token(user)
         refresh_token = str(token)
@@ -418,16 +406,6 @@ def naver_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        return res
-
-# class NaverLogin(SocialLoginView):
-#     adapter_class = naver_view.NaverOAuth2Adapter
-#     callback_url = NAVER_CALLBACK_URI
-#     client_class = OAuth2Client
-
-
-#되냐?
+        
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
