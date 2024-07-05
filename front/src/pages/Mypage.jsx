@@ -253,9 +253,15 @@ const UserNameInput = styled.input`
 `;
 
 const MyPage = () => {
+    const userid = localStorage.getItem('userID');
     const [MyPosts, setMyPosts] = useState([]);
     const [MyBookMark, setMyBookMark] = useState([]);
-    const [MyComment, setMyComment] = useState([]);
+    const [MyComment, setMyComment] = useState([
+        {title:'백준 1002번 터렛 - 초보 개발자 이야기', comments: '잘 보고 갑니다~!!',date:'24.07.04'},
+        {title:'백준 952번 풀이',comments: '안녕하세요',date:'24.07.04' },
+        {title:'[C]백준 1002번 터렛',comments: '이 부분은 이해가 잘 안 갑니다',date:'24.07.05'},
+        {title:'백준에서 가장 많이 풀린',comments:'GOOD',date:'24.07.05' },
+    ]);
     const [activeTab, setActiveTab] = useState('posts');
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
@@ -278,28 +284,34 @@ const MyPage = () => {
                 })
                 .then(res => {
                     setMyPosts(res.data.posts);
+                    
                 })
                 .catch(e => {
                     console.log(e);
                 });
 
             axios
-                .get(`${API_BASE_URL}/bookmarks`)
+                .get(`${API_BASE_URL}/blog/bookmarks/`,{
+                    headers: {
+                        user_id: userid,
+                    }
+                })
                 .then(res => {
                     setMyBookMark(res.data);
-                })
+                    console.log(res);
+                }) 
                 .catch(e => {
                     console.log(e);
                 });
 
-            axios
-                .get(`${API_BASE_URL}/comments`)
-                .then(res => {
-                    setMyComment(res.data);
-                })
-                .catch(e => {
-                    console.log(e);
-                });
+            // axios
+            //     .get(`${API_BASE_URL}/comments`)
+            //     .then(res => {
+            //         setMyComment(res.data);
+            //     })
+            //     .catch(e => {
+            //         console.log(e);
+            //     });
         }
     }, [navigate]);
 
