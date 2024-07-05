@@ -9,7 +9,7 @@ import 'highlight.js/styles/github.css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
 import xml from 'highlight.js/lib/languages/xml';
-import { API_BASE_URL } from '../config';
+import axiosInstance from '../utils/axiosInstance';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('python', python);
@@ -160,10 +160,15 @@ const formats = [
 ];
 
 const Posting = () => {
+  const userID = Number(localStorage.getItem('userID'));
+
+  console.log("user id : " + userID);
+
   const [Public, setPublic] = useState(true);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [solutionNumber, setSolutionNumber] = useState('');
+  const [link, setLink] = useState('');
   const [content, setContent] = useState('');
   const [file, setFile] = useState(null);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -183,20 +188,19 @@ const Posting = () => {
 
     try {
       const formData = new FormData();
-      formData.append('post_title', title);
+      formData.append('title', title);
       formData.append('content', content);
-      formData.append('number', category);
-      formData.append('solution_number', solutionNumber);
-      formData.append('public', Public);
+      formData.append('Tag', category);
+      formData.append('number', solutionNumber);
+      formData.append('link', link);
+      formData.append('public', Public ? "True" : "False");
+      formData.append('user_id', userID);
 
       if (file) {
         formData.append('file', file);
       }
 
-      const response = await fetch(`${API_BASE_URL}/blog`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await axiosInstance.post('/blog/posts/', formData);
 
       if (response.ok) {
         navigate('/Posting');
@@ -247,6 +251,15 @@ const Posting = () => {
                   value={solutionNumber}
                   onChange={(e) => setSolutionNumber(e.target.value)}
                   placeholder="작성하는 문제의 번호만 입력해주세요."
+                  required
+                />
+                <Label htmlFor="link">링크 입력</Label>
+                <Input
+                  type="text"
+                  id="link"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  placeholder="문제 링크를 입력해 주세요."
                   required
                 />
                 <Label htmlFor="content">내용을 입력해 주세요.</Label>
