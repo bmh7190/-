@@ -9,7 +9,7 @@ urlpatterns = [
     path('posts/<int:pk>/', PostDetail.as_view(), name='post-detail'),
 
     path('comments/<int:post_pk>', CommentList.as_view(), name='comment-list'),
-    path('comments/<int:pk>/', CommentDetail.as_view(), name='comment-detail'),
+    path('comments/', CommentDetail.as_view(), name='comment-detail'),
 
     path('bookmarks/', BookmarkList.as_view(), name='bookmark-list'),
     path('bookmarks/<int:pk>/', BookmarkDetail.as_view(), name='bookmark-detail'),

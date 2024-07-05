@@ -201,14 +201,30 @@ class CommentList(APIView):
 
 
 class CommentDetail(APIView):
-    
+
     def post(self, request):
+        user = request.user if request.user.is_authenticated else None
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            post_id = serializer.validated_data['post_id']
+            content = serializer.validated_data['content']
+            
+            # Get the post object
+            post = get_object_or_404(Post, id=post_id)
+            
+            # Create a new comment
+            comment = Comment.objects.create(post=post, content=content,user=user)
+            
+            return Response({
+                'id': comment.id,
+                'post_id': comment.post.id,
+                'content': comment.content,
+                'created_at': comment.created_at,
+                'user_id':comment.user
+            }, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def put(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk)
         serializer = CommentSerializer(comment, data=request.data)
