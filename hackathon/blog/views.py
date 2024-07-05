@@ -215,7 +215,7 @@ class CommentDetail(APIView):
         post = get_object_or_404(Post, id=post_id)
         user = get_object_or_404(User, id = user_id)
         # Create a new comment
-        comment = Comment.objects.create(post=post, content=content, User=user)
+        comment = Comment.objects.create(post=post, content=content, user=user)
         
         return Response({
             'id': comment.id,
