@@ -24,7 +24,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
-    print(request)
     email = request.data.get('email')
     password = request.data.get('password') 
     name = request.data.get('name')
@@ -55,10 +54,10 @@ def login(request):
 
     refresh = RefreshToken.for_user(user)
     update_last_login(None, user)
-
+    user_name = get_object_or_404(User,pk=user.pk)
     return Response({'refresh_token': str(refresh),
                      'access_token': str(refresh.access_token),
-                    'user':user.pk }, status=status.HTTP_200_OK)
+                    'user':user.pk,'name':user_name.name}, status=status.HTTP_200_OK)
 
 
 

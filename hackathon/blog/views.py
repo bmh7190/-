@@ -254,8 +254,12 @@ class CommentDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class BookmarkList(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
-        user = request.user if request.user.is_authenticated else None
+        user_id = request.data.get("user_id")
+        user = get_object_or_404(User, pk=user_id)
+        
         if user:
             bookmarks = Bookmark.objects.filter(user=user)  # 사용자가 생성한 북마크만 필터링
         else:
