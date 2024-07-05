@@ -136,8 +136,7 @@ class PostList(APIView):
         )
 
         post.save()
-        message = f"id: {post.pk}번 포스트 생성 성공"
-        return Response(data = None, status = status.HTTP_201_CREATED)
+        return Response(data = post.pk, status = status.HTTP_201_CREATED)
         
     
 class PostDetail(APIView):
@@ -254,14 +253,13 @@ class CommentDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class BookmarkList(APIView):
-    permission_classes = [IsAuthenticated]
-    
+    #user의 북마크한 리스트
+
     def get(self, request):
         user_id = request.data.get("user_id")
         user = get_object_or_404(User, pk=user_id)
-        
         if user:
-            bookmarks = Bookmark.objects.filter(user=user)  # 사용자가 생성한 북마크만 필터링
+            bookmarks = Bookmark.objects.filter(user=user)
         else:
             bookmarks = Bookmark.objects.none() 
         serializer = BookmarkSerializer(bookmarks, many=True)
