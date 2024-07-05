@@ -12,5 +12,5 @@ urlpatterns = [
     path('comments/', CommentDetail.as_view(), name='comment-detail'),
 
     path('bookmarks/', BookmarkList.as_view(), name='bookmark-list'),
-    path('bookmarks/<int:pk>/', BookmarkDetail.as_view(), name='bookmark-detail'),
+    path('bookmarks/toggle/', ToggleBookmark.as_view(), name='bookmark-toggle'),
 ]
