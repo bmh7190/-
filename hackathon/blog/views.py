@@ -224,22 +224,26 @@ class CommentDetail(APIView):
     
 class BookmarkList(APIView):
     def get(self, request):
-        bookmarks = Bookmark.objects.all()
+        user = request.user if request.user.is_authenticated else None
+        if user:
+            bookmarks = Bookmark.objects.filter(user=user)  # 사용자가 생성한 북마크만 필터링
+        else:
+            bookmarks = Bookmark.objects.none() 
         serializer = BookmarkSerializer(bookmarks, many=True)
         return Response(serializer.data)
-
-    def post(self, request):
-        serializer = BookmarkSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class BookmarkDetail(APIView):
     def get(self, request, pk):
         bookmark = get_object_or_404(Bookmark, pk=pk)
         serializer = BookmarkSerializer(bookmark)
         return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = BookmarkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         bookmark = get_object_or_404(Bookmark, pk=pk)
