@@ -93,9 +93,9 @@ class ProfileDetail(APIView):
         profile = get_object_or_404(Profile, user=user)
         return profile.pk
 
-    def get(self, request, user_pk):
+    def get(self, request, pk):
         # 사용자 pk를 받아서 pk_return을 호출
-        profile_pk = self.pk_return(user_pk)
+        profile_pk = self.pk_return(pk)
         # 찾아낸 Profile PK를 사용하여 프로필 객체를 가져옴
         profile = get_object_or_404(Profile, pk=profile_pk)
         serializer = ProfileSerializer(profile)

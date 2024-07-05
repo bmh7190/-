@@ -154,24 +154,61 @@ class PostDetail(APIView):
 
 class CommentList(APIView):
     permission_classes = [AllowAny]
-    def get(self, request):
-        comments = Comment.objects.all()
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
 
+    def get(self, request, post_pk):
+        search_term = request.GET.get('SearchTerm', '')
+        per_pages = int(request.GET.get('PerPages', 3))
+        page_number = int(request.GET.get('PageNum', 1))
+        is_mine = request.GET.get('isMine', 'false') == 'true'
+        user_email = request.GET.get('UserEmail', None)
+        user = request.user if request.user.is_authenticated else None
+
+        post = get_object_or_404(Post, pk=post_pk)
+        comment_list = Comment.objects.filter(post=post)
+
+        if search_term:
+            comment_list = comment_list.filter(Q(title__icontains=search_term) | Q(content__icontains=search_term))
+        if user_email:
+            user_filter = get_object_or_404(User, email=user_email)
+            comment_list = comment_list.filter(user=user_filter)
+        elif is_mine and user:
+            comment_list = comment_list.filter(user=user)
+        paginator = Paginator(comment_list, per_pages)
+
+        try:
+            comments = paginator.page(page_number)
+        except PageNotAnInteger:
+            comments = paginator.page(1)
+        except EmptyPage:
+            comments = paginator.page(paginator.num_pages)
+
+        
+        serializer = CommentSerializer(comments, many=True)
+        serialized_data = serializer.data
+        if user:
+            for comment_list_data in serialized_data:
+                comment_list_id = comment_list_data['id']
+                comment_list_data['is_mine'] = comment_list.filter(pk=comment_list_id, user=user).exists()
+
+        return Response({
+            'comments': serialized_data,
+            'pages': paginator.num_pages,
+            'total_count': paginator.count
+        })
+
+
+    
+
+
+class CommentDetail(APIView):
+    
     def post(self, request):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class CommentDetail(APIView):
-    def get(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
-
+    
     def put(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk)
         serializer = CommentSerializer(comment, data=request.data)
