@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../config';
 
 const Container = styled.div`
   display: flex;
@@ -76,7 +77,7 @@ const EmailLogin = () => {
     };
 
     try {
-      const response = await fetch('http://solver.r-e.kr/users/login', {
+      const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,8 +93,8 @@ const EmailLogin = () => {
       }
 
       const result = await response.json();
-      localStorage.setItem('access_token', result.access_token);
-      localStorage.setItem('refresh_token', result.refresh_token);
+      localStorage.setItem('accessToken', result.access_token);
+      localStorage.setItem('refreshToken', result.refresh_token);
       alert('로그인이 완료되었습니다!');
       navigate('/');  // Redirect to root after successful login
     } catch (error) {
