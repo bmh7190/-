@@ -265,28 +265,24 @@ class BookmarkList(APIView):
         serializer = BookmarkSerializer(bookmarks, many=True)
         return Response(serializer.data)
 
-class BookmarkDetail(APIView):
-    def get(self, request, pk):
-        bookmark = get_object_or_404(Bookmark, pk=pk)
-        serializer = BookmarkSerializer(bookmark)
-        return Response(serializer.data)
+class ToggleBookmark(APIView):
+    permission_classes = [IsAuthenticated]
     
-    def post(self, request):
-        serializer = BookmarkSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self,request):
+        user_id = int(request.data.get('user_id'))
+        post_id = int(request.data.get('post_id'))
+        
+        user = get_object_or_404(User,pk=user_id)
+        post = get_object_or_404(Post, pk=post_id)
 
-    def put(self, request, pk):
-        bookmark = get_object_or_404(Bookmark, pk=pk)
-        serializer = BookmarkSerializer(bookmark, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, pk):
-        bookmark = get_object_or_404(Bookmark, pk=pk)
-        bookmark.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        bookmark, created = Bookmark.objects.get_or_create(user=user, post=post)
+
+        if not created:
+            # 북마크가 이미 존재하면 해제 (삭제)
+            bookmark.delete()
+            return Response({"detail": "Bookmark removed."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            # 북마크가 존재하지 않으면 등록
+            bookmark.is_bookmarked = True
+            bookmark.save()
+            return Response({"detail": "Bookmark added."}, status=status.HTTP_201_CREATED)
