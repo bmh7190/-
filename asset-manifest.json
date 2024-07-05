@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/inha_likelion_hackathon4/static/css/main.a2c7d4a3.css",
+    "main.js": "/inha_likelion_hackathon4/static/js/main.bed0edd3.js",
+    "static/js/453.c2b2afdb.chunk.js": "/inha_likelion_hackathon4/static/js/453.c2b2afdb.chunk.js",
+    "index.html": "/inha_likelion_hackathon4/index.html",
+    "main.a2c7d4a3.css.map": "/inha_likelion_hackathon4/static/css/main.a2c7d4a3.css.map",
+    "main.bed0edd3.js.map": "/inha_likelion_hackathon4/static/js/main.bed0edd3.js.map",
+    "453.c2b2afdb.chunk.js.map": "/inha_likelion_hackathon4/static/js/453.c2b2afdb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a2c7d4a3.css",
+    "static/js/main.bed0edd3.js"
+  ]
+}
