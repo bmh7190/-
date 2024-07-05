@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { API_BASE_URL } from '../config';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';  // axios 인스턴스 파일을 가져옴
 
 const Container = styled.div`
   max-width: 800px;
@@ -124,18 +123,22 @@ const SubmitButton = styled.button`
   }
 `;
 
+const DeleteButton = styled.button`
+`
+
 const PostComment = () => {
   const { postId } = useParams();
   const [comments, setComments] = useState([]);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [commentCount, setCommentCount] = useState(0);
+  const userId = localStorage.getItem('userID');
 
   useEffect(() => {
     // 댓글 목록을 가져오는 함수
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/comments/${postId}`);
+        const response = await axiosInstance.get(`/blog/comments/${postId}`);
         setComments(response.data.comments);
         setCommentCount(response.data.total_count);
       } catch (error) {
@@ -156,14 +159,9 @@ const PostComment = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/blog/comments/`,
-        { post: postId, content: newComment },
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        }
+      const response = await axiosInstance.post(
+        `/blog/comments/`,
+        { post: postId, content: newComment }
       );
 
       setComments([...comments, response.data]);
@@ -172,6 +170,17 @@ const PostComment = () => {
       setIsCommentFormOpen(false);
     } catch (error) {
       console.error('Failed to submit comment:', error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axiosInstance.delete(`/blog/comments/${commentId}/`);
+
+      setComments(comments.filter(comment => comment.id !== commentId));
+      setCommentCount(commentCount - 1);
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
     }
   };
 
@@ -190,6 +199,9 @@ const PostComment = () => {
                 <Author>{comment.user}</Author>
                 <Content>{comment.content}</Content>
               </CommentContent>
+              {comment.user.toString() === userId && (
+                <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
+              )}
             </CommentItem>
           ))
         ) : (
