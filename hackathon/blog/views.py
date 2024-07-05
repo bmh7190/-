@@ -256,7 +256,7 @@ class BookmarkList(APIView):
     #user의 북마크한 리스트
 
     def get(self, request):
-        user_id = request.data.get("user_id")
+        user_id = request.GET.get("user_id")
         user = get_object_or_404(User, pk=user_id)
         if user:
             bookmarks = Bookmark.objects.filter(user=user)
