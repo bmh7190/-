@@ -163,8 +163,8 @@ def google_callback(request):
             status=status.HTTP_200_OK,
         )
 
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
     
     except User.DoesNotExist:
         user = User.objects.create_user(email=email,name=name)
@@ -187,8 +187,8 @@ def google_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
 
 # class GoogleLogin(SocialLoginView):
 #     adapter_class = google_view.GoogleOAuth2Adapter
@@ -258,8 +258,8 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
     
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
@@ -282,8 +282,8 @@ def kakao_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
 
 
 
@@ -382,8 +382,9 @@ def naver_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
+    
     except User.DoesNotExist:
         user = User.objects.create_user(email=user_email,name=user_name)
         user.name = user_name
@@ -405,17 +406,6 @@ def naver_callback(request):
             },
             status=status.HTTP_200_OK,
         )
-        res.set_cookie("accessToken", value=access_token, max_age=None, expires=None, secure=True, samesite="None", httponly=True)
-
-        res.set_cookie("refreshToken", value=refresh_token, max_age=None, expires=None, secure=True, samesite="None",httponly=True)
-
-        res["Authorization"] = f"Bearer {access_token}"
-        return HttpResponseRedirect(FRONTEND_URL)
-
-# class NaverLogin(SocialLoginView):
-#     adapter_class = naver_view.NaverOAuth2Adapter
-#     callback_url = NAVER_CALLBACK_URI
-#     client_class = OAuth2Client
-
-
-#되냐?
+        
+        redirect_url = f"{FRONTEND_URL}/login?access={access_token}&refresh={refresh_token}"
+        return HttpResponseRedirect(redirect_url)
