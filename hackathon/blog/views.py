@@ -137,7 +137,7 @@ class PostList(APIView):
 
         post.save()
         message = f"id: {post.pk}번 포스트 생성 성공"
-        return Response(data = None, message = message, status = status.HTTP_201_CREATED)
+        return Response(data = None, status = status.HTTP_201_CREATED)
         
     
 class PostDetail(APIView):
