@@ -94,12 +94,13 @@ const EmailLogin = () => {
         }
       });
 
-      const { access_token, refresh_token } = response.data;
+      const { access_token, refresh_token, user, name } = response.data;
       const decodedToken = decodeJWT(access_token);
 
       localStorage.setItem('accessToken', access_token);
       localStorage.setItem('refreshToken', refresh_token);
-      localStorage.setItem('userID', decodedToken.user_id);  // Assuming 'uid' is the key in the token payload
+      localStorage.setItem('userID', user);  // Assuming 'uid' is the key in the token payload
+      localStorage.setItem('userName', name);
       alert('로그인이 완료되었습니다!');
       navigate('/');  // Redirect to root after successful login
     } catch (error) {

@@ -194,9 +194,7 @@ const SinglePost = () => {
           </PostTitleWrap>
           <BookMarkIcon width="40px" height="40px" src="/bookmark.png" />
         </PostHeader>
-        <PostContent>
-          {post.content}
-        </PostContent>
+        <PostContent dangerouslySetInnerHTML={{ __html: post.content }} />
         {post.attachment && (
           <Attachment>
             <img alt='attachment icon' src='/attach.png'/>

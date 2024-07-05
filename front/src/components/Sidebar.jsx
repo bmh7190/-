@@ -41,9 +41,8 @@ const UserProfile = styled.div`
 `;
 
 const UserProfileImg = styled.img`
-    background-color: #cdcdcd;
-    width: 55px;
-    height: 55px;
+    width: 73px;
+    height: 73px;
 `;
 
 const UserTitle = styled.div`
@@ -123,11 +122,15 @@ const Sidebar = () => {
           },
           params: {
             isMine: true,
-            PerPages: 6,
+            PerPages: 8,
             PageNum: 1,
           },
         });
         setMyPosts(response.data.posts || []);
+        setUserProfile(prevState => ({
+          ...prevState,
+          post_count: response.data.total_count,
+        }));
       } catch (error) {
         console.error('Error fetching my posts:', error);
       }
@@ -147,14 +150,13 @@ const Sidebar = () => {
         {userProfile ? (
           <>
             <UserProfile>
-              <UserProfileImg src={userProfile.profile_image || '/default_profile.png'} />
+              <UserProfileImg src='/defaultImage.png' />
               <UserTitle>
-                <UserName>{userProfile.nickname || '닉네임'}</UserName>
+                <UserName>{localStorage.getItem('userName') || '닉네임'}</UserName>
                 <UserEmail>{userProfile.email}</UserEmail>
               </UserTitle>
             </UserProfile>
             <UserStats>게시글 작성: {userProfile.post_count || 0}회</UserStats>
-            <UserStats>댓글 작성: {userProfile.comment_count || 0}회</UserStats>
             <PostButton onClick={handleClick}>글쓰기</PostButton>
           </>
         ) : (
