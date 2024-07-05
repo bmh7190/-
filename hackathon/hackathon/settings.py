@@ -188,7 +188,7 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.AllowAny',  # 누구나 접근 가능 
 				# (기본적으로 누구나 접근 가능하게 설정하고, 인증된 요청인지 확인하는 api를 따로 지정하게 하려면 
 				# 이 옵션을 위의 옵션 대신 켜주어도 됩니다!)
-        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
