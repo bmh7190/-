@@ -18,7 +18,7 @@ const ProfileCardContainer = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow: 0px 5px 15px 0px #888;
     border-radius: 30px;
     background-color: #FBFDFF;
@@ -58,7 +58,7 @@ const ImgButton = styled.button`
     border-style: none;
     font-size: 10px;
     background-color: #B8C5D4;
-    color: white;
+    color: #000000;
     cursor: pointer;
     box-shadow: 0px 1px 5px 0px #888;
 `;
@@ -160,12 +160,14 @@ const BookMarkBox = styled.div`
 const ContentsList = styled.div`
     display: flex;
     flex-direction: column;
+    margin-left: 15px;
 `;
 
 const ButtonBox2 = styled.div`
     display: flex;
     align-items: flex-start;
     margin-left: 30px;
+    margin-top: 20px;
 `;
 
 const BookMarkButton = styled.button`
@@ -218,7 +220,7 @@ const PostContainerTitle = styled.p`
     color:white;
     border-radius: 10px;
     padding: 5px;
-    font-size: 17px;
+    font-size: 15px;
 `;
 
 const PostCardBox = styled.div`
@@ -230,6 +232,7 @@ const PostCardTitle = styled.h2`
     font-weight: bold;
     margin: 0;
     cursor: pointer;
+    color: #525252
 `;
 
 const PostDate = styled.p`
@@ -250,9 +253,7 @@ const UserNameInput = styled.input`
 
 const MyPage = () => {
     const [MyPosts, setMyPosts] = useState([
-        { id: 1, title: '내가 작성한 게시물 제목1', date: '24.00.00' },
-        { id: 2, title: '내가 작성한 게시물 제목2', date: '24.00.00' },
-        { id: 3, title: '내가 작성한 게시물 제목3', date: '24.00.00' },  
+        
     ]);
 
     const [MyBookMark, setMyBookMark] = useState([
