@@ -152,6 +152,7 @@ class PostDetail(APIView):
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# 특정 포스트의 코멘트보기
 class CommentList(APIView):
     permission_classes = [AllowAny]
 
@@ -198,8 +199,7 @@ class CommentList(APIView):
 
 
     
-
-
+# 
 class CommentDetail(APIView):
 
     def post(self, request):
@@ -225,7 +225,7 @@ class CommentDetail(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk):
+    def put(self, request):
         comment = get_object_or_404(Comment, pk=pk)
         serializer = CommentSerializer(comment, data=request.data)
         if serializer.is_valid():
@@ -233,8 +233,10 @@ class CommentDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
+    def delete(self, request):
+        # 삭제할 댓글 아이디 요청 받기
+        comment_id = request.comment_id
+        comment = get_object_or_404(Comment, pk=comment_id)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
