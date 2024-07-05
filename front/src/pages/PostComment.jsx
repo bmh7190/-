@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import axiosInstance from '../utils/axiosInstance';  // axios 인스턴스 파일을 가져옴
+import { API_BASE_URL } from '../config';
+import axios from 'axios';
 
 const Container = styled.div`
   max-width: 800px;
@@ -124,7 +125,19 @@ const SubmitButton = styled.button`
 `;
 
 const DeleteButton = styled.button`
-`
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+
+  &:hover {
+    background-color: #ff1a1a;
+  }
+`;
 
 const PostComment = () => {
   const { postId } = useParams();
@@ -132,13 +145,12 @@ const PostComment = () => {
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [commentCount, setCommentCount] = useState(0);
-  const userId = localStorage.getItem('userID');
 
   useEffect(() => {
     // 댓글 목록을 가져오는 함수
     const fetchComments = async () => {
       try {
-        const response = await axiosInstance.get(`/blog/comments/${postId}`);
+        const response = await axios.get(`${API_BASE_URL}/blog/comments/${postId}`);
         setComments(response.data.comments);
         setCommentCount(response.data.total_count);
       } catch (error) {
@@ -159,9 +171,14 @@ const PostComment = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      const response = await axiosInstance.post(
-        `/blog/comments/`,
-        { post: postId, content: newComment }
+      const response = await axios.post(
+        `${API_BASE_URL}/blog/comments/`,
+        { post: postId, content: newComment },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        }
       );
 
       setComments([...comments, response.data]);
@@ -175,14 +192,19 @@ const PostComment = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axiosInstance.delete(`/blog/comments/${commentId}/`);
-
+      await axios.delete(`${API_BASE_URL}/blog/comments/${commentId}/`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
       setComments(comments.filter(comment => comment.id !== commentId));
       setCommentCount(commentCount - 1);
     } catch (error) {
       console.error('Failed to delete comment:', error);
     }
   };
+
+  const userId = localStorage.getItem('userID');
 
   return (
     <Container>
@@ -198,10 +220,10 @@ const PostComment = () => {
               <CommentContent>
                 <Author>{comment.user}</Author>
                 <Content>{comment.content}</Content>
+                {comment.user === parseInt(userId) && (
+                  <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
+                )}
               </CommentContent>
-              {comment.user.toString() === userId && (
-                <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
-              )}
             </CommentItem>
           ))
         ) : (
