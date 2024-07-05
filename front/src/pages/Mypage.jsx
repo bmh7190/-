@@ -253,205 +253,191 @@ const UserNameInput = styled.input`
 `;
 
 const MyPage = () => {
-    const [MyPosts, setMyPosts] = useState([
-        
-    ]);
-
-    const [MyBookMark, setMyBookMark] = useState([
-        { id: 1, title: '북마크한 게시물1', date: '24.00.00' },
-        { id: 2, title: '북마크한 게시물2', date: '24.00.00' },
-        { id: 3, title: '북마크한 게시물3', date: '24.00.00' },
-    ]);
-
-    const [MyComment, setMyComment] = useState([
-        { id: 1, title: '댓글 작성한 게시물1', comments: '안녕하세요~', date: '24.00.00' },
-        { id: 2, title: '댓글 작성한 게시물2', comments: '글 잘보고 갑니다 뭐 어쩌고 저쩌고 내용은 이해가 잘 안가요', date: '24.00.00' },
-        { id: 3, title: '댓글 작성한 게시물3', comments: '브2!', date: '24.00.00' },
-    ]);
-
+    const [MyPosts, setMyPosts] = useState([]);
+    const [MyBookMark, setMyBookMark] = useState([]);
+    const [MyComment, setMyComment] = useState([]);
     const [activeTab, setActiveTab] = useState('posts');
-
     const navigate = useNavigate();
-
     const [isEditing, setIsEditing] = useState(false);
     const [userName, setUserName] = useState('닉네임');
     const [newUserName, setNewUserName] = useState(userName);
     const [selectedImage, setSelectedImage] = useState('/defaultImage.png');
 
     useEffect(() => {
-        axios
-          .get(`${API_BASE_URL}/blog/posts?isMine=true`,{
-            params: {
-                isMine: true,
-                SortBy: 'latest',
-                PerPages: 10,
-              }
-          })
-          .then(res => {
-            setMyPosts(res.data);
-          })
-          .catch(e => {
-            console.log(e);
-          });
-    }, []);  
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            navigate('/login');
+        } else {
+            axios
+                .get(`${API_BASE_URL}/blog/posts?isMine=true`, {
+                    params: {
+                        isMine: true,
+                        SortBy: 'latest',
+                        PerPages: 10,
+                    }
+                })
+                .then(res => {
+                    setMyPosts(res.data.posts);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
 
-    useEffect(() => {
-        axios
-          .get(`${API_BASE_URL}/bookmarks`)
-          .then(res => {
-            setMyBookMark(res.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-  }, []);  
-  
-  useEffect(() => {
-      axios
-        .get(`${API_BASE_URL}/comments`)
-        .then(res => {
-          setMyComment(res.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-  }, []);  
-  
-  const handlePostClick = (postId) => {
-      navigate(`/Post/${postId}`);
-  };
-  
-  const handleEditClick = () => {
-      setIsEditing(true);
-  };
-  
-  const handleSaveClick = () => {
-      setUserName(newUserName);
-      setIsEditing(false);
-  };
-  
-  const handleFileChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-          setSelectedImage(URL.createObjectURL(file));
-      }
-  };
-  
-  const handleButtonClick = () => {
-      document.getElementById('file').click();
-  };
-  
-  const handleTabClick = (tab) => {
-      setActiveTab(tab);
-  };
-  
-  const handleLogoutClick = async () => {
-      try {
-          await axios.get(`${API_BASE_URL}/users/logout`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-              }
-          });
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          navigate('/Login');
-      } catch (error) {
-          console.error('로그아웃 실패:', error);
-      }
-  };
-  
-  return (
-      <ProfileContainer>
-          <ProfileCardContainer>
-              <ProfileBox>
-                  <ImgBox>
-                      <ProfileImg src={selectedImage} alt=" " />
-                      <ImgButtonBox>
-                      <ImgButton onClick={handleButtonClick}>사진 수정</ImgButton>
-                      <HiddenFileInput
-                          type="file"
-                          id="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                      />
-                      </ImgButtonBox>
-                  </ImgBox>
-                  <TextBox>
-                      <NameBox>
-                          <ButtonBox>
-                              {isEditing ? (
-                                  <UserNameInput 
-                                  value={newUserName} onChange={(e) => setNewUserName(e.target.value)}/>
-                              ) : ( <UserName>{userName}</UserName>)}
-                              {isEditing ? (
-                                  <NameBuuton2 onClick={handleSaveClick}>완료</NameBuuton2>
-                              ) : ( <NameButton1 onClick={handleEditClick}>수정</NameButton1> )}
-                          </ButtonBox>
-                      </NameBox>
-                      <UserEmail>example@gmail.com</UserEmail>
-                      <UserState>글 작성 : 20회</UserState>
-                      <UserState>댓글 작성 : 20회</UserState>
-                      <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
-                  </TextBox>
-              </ProfileBox>
-                  <ButtonBox2>
-                      <BookMarkButton 
-                          isActive={activeTab === 'bookmarks'} onClick={() => handleTabClick('bookmarks')}>
-                          북마크한 글
-                      </BookMarkButton>
-                      <CommentButton
-                          isActive={activeTab === 'comments'} onClick={() => handleTabClick('comments')}>
-                          내가 쓴 댓글
-                      </CommentButton>
-                  </ButtonBox2>
-              <BookMarkBox>
-                  {activeTab === 'bookmarks' && (
-                      <ContentsList>
-                          {MyBookMark.length > 0 ? (
-                          MyBookMark.map((post) => (
-                              <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
-                                  <p>{post.title}</p>
-                                  <PostDate>{post.date}</PostDate>
-                              </ListPostBox>
-                          ))): (
-                            <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
-                          )
-                          }
-                      </ContentsList>
-                  )}
-                  {activeTab === 'comments' && (
-                      <ContentsList>
-                          {MyComment.length > 0 ? (
-                          MyComment.map((comment) => (
-                              <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
-                                  <p>{comment.title}</p>
-                                  <p>{comment.comments}</p>
-                                  <PostDate>{comment.date}</PostDate>
-                              </ListPostBox>
-                          ))): (
-                            <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
-                          )
-                        }
-                      </ContentsList>
-                  )}
-              </BookMarkBox>
-          </ProfileCardContainer>
-          <PostContainer>
-              <PostContainerTitle>내가 쓴 글 살펴보기</PostContainerTitle>
-              {MyPosts.length > 0 ? (
-              MyPosts.map(post => (
-                  <PostCardBox 
-                  key={post.id} onClick={() => handlePostClick(post.id)}>
-                      <PostCardTitle>{post.title}</PostCardTitle> 
-                      <PostDate>{post.date}</PostDate>
-                  </PostCardBox>
-              ))): (
-                <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
-              )
-            }
-          </PostContainer>
-      </ProfileContainer>
-  );
+            axios
+                .get(`${API_BASE_URL}/bookmarks`)
+                .then(res => {
+                    setMyBookMark(res.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+
+            axios
+                .get(`${API_BASE_URL}/comments`)
+                .then(res => {
+                    setMyComment(res.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+    }, [navigate]);
+
+    const handlePostClick = (postId) => {
+        navigate(`/Post/${postId}`);
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleSaveClick = () => {
+        setUserName(newUserName);
+        setIsEditing(false);
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(URL.createObjectURL(file));
+        }
+    };
+
+    const handleButtonClick = () => {
+        document.getElementById('file').click();
+    };
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
+    const handleLogoutClick = async () => {
+        try {
+            await axios.get(`${API_BASE_URL}/users/logout`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            });
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            navigate('/login');
+        } catch (error) {
+            console.error('로그아웃 실패:', error);
+        }
+    };
+
+    return (
+        <ProfileContainer>
+            <ProfileCardContainer>
+                <ProfileBox>
+                    <ImgBox>
+                        <ProfileImg src={selectedImage} alt=" " />
+                        <ImgButtonBox>
+                            <ImgButton onClick={handleButtonClick}>사진 수정</ImgButton>
+                            <HiddenFileInput
+                                type="file"
+                                id="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                        </ImgButtonBox>
+                    </ImgBox>
+                    <TextBox>
+                        <NameBox>
+                            <ButtonBox>
+                                {isEditing ? (
+                                    <UserNameInput 
+                                    value={newUserName} onChange={(e) => setNewUserName(e.target.value)}/>
+                                ) : ( <UserName>{userName}</UserName>)}
+                                {isEditing ? (
+                                    <NameBuuton2 onClick={handleSaveClick}>완료</NameBuuton2>
+                                ) : ( <NameButton1 onClick={handleEditClick}>수정</NameButton1> )}
+                            </ButtonBox>
+                        </NameBox>
+                        <UserEmail>example@gmail.com</UserEmail>
+                        <UserState>글 작성 : 20회</UserState>
+                        <UserState>댓글 작성 : 20회</UserState>
+                        <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
+                    </TextBox>
+                </ProfileBox>
+                <ButtonBox2>
+                    <BookMarkButton 
+                        isActive={activeTab === 'bookmarks'} onClick={() => handleTabClick('bookmarks')}>
+                        북마크한 글
+                    </BookMarkButton>
+                    <CommentButton
+                        isActive={activeTab === 'comments'} onClick={() => handleTabClick('comments')}>
+                        내가 쓴 댓글
+                    </CommentButton>
+                </ButtonBox2>
+                <BookMarkBox>
+                    {activeTab === 'bookmarks' && (
+                        <ContentsList>
+                            {MyBookMark.length > 0 ? (
+                            MyBookMark.map((post) => (
+                                <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
+                                    <p>{post.title}</p>
+                                    <PostDate>{post.date}</PostDate>
+                                </ListPostBox>
+                            ))): (
+                                <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+                            )
+                            }
+                        </ContentsList>
+                    )}
+                    {activeTab === 'comments' && (
+                        <ContentsList>
+                            {MyComment.length > 0 ? (
+                            MyComment.map((comment) => (
+                                <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
+                                    <p>{comment.title}</p>
+                                    <p>{comment.comments}</p>
+                                    <PostDate>{comment.date}</PostDate>
+                                </ListPostBox>
+                            ))): (
+                                <div>No comments found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+                            )
+                            }
+                        </ContentsList>
+                    )}
+                </BookMarkBox>
+            </ProfileCardContainer>
+            <PostContainer>
+                <PostContainerTitle>내가 쓴 글 살펴보기</PostContainerTitle>
+                {MyPosts.length > 0 ? (
+                MyPosts.map(post => (
+                    <PostCardBox 
+                    key={post.id} onClick={() => handlePostClick(post.id)}>
+                        <PostCardTitle>{post.title}</PostCardTitle> 
+                        <PostDate>{post.date}</PostDate>
+                    </PostCardBox>
+                ))): (
+                    <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+                )
+                }
+            </PostContainer>
+        </ProfileContainer>
+    );
 };
 
 export default MyPage;
