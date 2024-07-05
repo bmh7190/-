@@ -5,7 +5,7 @@ urlpatterns = [
     path('tags/', TagList.as_view(), name='tag-list'),
     path('tags/<int:pk>/', TagDetail.as_view(), name='tag-detail'),
 
-    path('posts/', PostList.as_view(), name='post-list'),
+    path('posts/<int:post_pk>', PostList.as_view(), name='post-list'),
     path('posts/<int:pk>/', PostDetail.as_view(), name='post-detail'),
 
     path('comments/', CommentList.as_view(), name='comment-list'),
