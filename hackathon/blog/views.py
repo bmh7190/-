@@ -9,7 +9,7 @@ from .serializers import TagSerializer, PostSerializer, CommentSerializer,Bookma
 from users.models import User
 
 from rest_framework.decorators import api_view, permission_classes,APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 
 class TagList(APIView):
     def get(self, request):
@@ -127,6 +127,13 @@ class PostList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PostDetail(APIView):
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAuthenticated()]  # 기본 권한을 설정하거나 다른 권한 클래스를 설정합니다.
+
+
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post)
@@ -146,6 +153,7 @@ class PostDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CommentList(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         comments = Comment.objects.all()
         serializer = CommentSerializer(comments, many=True)
