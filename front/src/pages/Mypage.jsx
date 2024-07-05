@@ -341,7 +341,11 @@ const MyPage = () => {
   
   const handleLogoutClick = async () => {
       try {
-          await axios.get(`${API_BASE_URL}/users/logout`, { withCredentials: true });
+          await axios.get(`${API_BASE_URL}/users/logout`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              }
+          });
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           navigate('/Login');
