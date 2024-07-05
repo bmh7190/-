@@ -70,12 +70,6 @@ const Author = styled.div`
   margin-bottom: 5px;
 `;
 
-const Date = styled.div`
-  color: #888;
-  font-size: 12px;
-  margin-bottom: 10px;
-`;
-
 const Content = styled.div`
   font-size: 14px;
   color: #333;
@@ -141,9 +135,9 @@ const PostComment = () => {
     // 댓글 목록을 가져오는 함수
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/comments?postId=${postId}`);
-        setComments(response.data);
-        setCommentCount(response.data.length);
+        const response = await axios.get(`${API_BASE_URL}/blog/comments/${postId}`);
+        setComments(response.data.comments);
+        setCommentCount(response.data.total_count);
       } catch (error) {
         console.error('Failed to fetch comments:', error);
       }
@@ -162,9 +156,9 @@ const PostComment = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      const response = await axios.put(
-        `${API_BASE_URL}/blog/comments/${postId}/`,
-        { content: newComment },
+      const response = await axios.post(
+        `${API_BASE_URL}/blog/comments/`,
+        { post: postId, content: newComment },
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -188,16 +182,19 @@ const PostComment = () => {
         <CommentCount>댓글 <span>{commentCount}</span></CommentCount>
       </Header>
       <CommentList>
-        {comments.map((comment) => (
-          <CommentItem key={comment.id}>
-            <Avatar />
-            <CommentContent>
-              <Author>{comment.author}</Author>
-              <Date>{comment.date}</Date>
-              <Content>{comment.content}</Content>
-            </CommentContent>
-          </CommentItem>
-        ))}
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <CommentItem key={comment.id}>
+              <Avatar />
+              <CommentContent>
+                <Author>{comment.user}</Author>
+                <Content>{comment.content}</Content>
+              </CommentContent>
+            </CommentItem>
+          ))
+        ) : (
+          <div>No comments found</div>
+        )}
       </CommentList>
       <WriteCommentButton onClick={handleWriteCommentClick}>댓글 쓰기</WriteCommentButton>
       <CommentForm isOpen={isCommentFormOpen}>
