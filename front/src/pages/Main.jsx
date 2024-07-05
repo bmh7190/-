@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_BASE_URL } from '../config';
+import axiosInstance from '../utils/axiosInstance';
 
 const MContainer = styled.div`
   display: flex;
@@ -89,7 +88,7 @@ const PostItem = styled.li`
   border: 1px solid #e9e9e9;
   padding: 10px;
   border-radius: 5px;
-  margin-bottom: 3px;
+  margin-bottom: 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -178,20 +177,19 @@ const BookMarkIcon = styled.img`
   width: 40px;
   height: 40px;
   cursor: pointer;
-  margin-left: 130px;
+  margin-left: 10px; /* 수정: 여백을 줄이기 위해 130px에서 10px로 수정 */
 `;
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  const [bookmarks, setBookmarks] = useState([]);
   const [sortBy, setSortBy] = useState('latest');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
+        const response = await axiosInstance.get(`/blog/posts`, {
             params: {
               SortBy: sortBy,
               PerPages: 3,
@@ -204,46 +202,39 @@ const MainPage = () => {
       }
     };
 
-    const fetchBookmarks = async () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        try {
-          const response = await axios.get(`${API_BASE_URL}/bookmarks/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setBookmarks(response.data.bookmarks || []);
-        } catch (error) {
-          console.error('북마크 가져오기 실패', error);
-        }
-      }
-    };
-
     fetchPosts();
-    fetchBookmarks();
-  }, []);
+  }, [sortBy]);
 
-  const handleBookClick = async (index) => {
-    const token = localStorage.getItem('access_token');
+  const handleBookClick = async (index, postId) => { // 수정: post_id -> postId로 변수명 변경
+    const token = localStorage.getItem('accessToken');
+    const userId = localStorage.getItem('userID');
     if (!token) {
       alert('로그인이 필요한 서비스입니다');
       navigate('/login');
       return;
     }
 
-    const newBookmarks = bookmarks.map((bookmark, i) => (i === index ? !bookmark : bookmark));
-    setBookmarks(newBookmarks);
-
     try {
-      await axios.post(`${API_BASE_URL}/bookmarks`, { bookmarks: newBookmarks }, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+      // 서버로 북마크 토글 요청
+      await axiosInstance.post(`/blog/bookmarks/toggle/`, {
+        user_id: userId,
+        post_id: postId,
       });
+
+      // 클라이언트 측에서 바로 북마크 상태 업데이트
+      const updatedPosts = posts.map((post, idx) => {
+        if (idx === index) {
+          return {
+            ...post,
+            is_bookmarked: !post.is_bookmarked,
+          };
+        }
+        return post;
+      });
+
+      setPosts(updatedPosts);
     } catch (error) {
-      console.error('북마크 업데이트', error);
+      console.error('북마크 업데이트 실패', error);
     }
   };
 
@@ -300,8 +291,8 @@ const MainPage = () => {
                   </PostLink>
                   <PostDescription>{new Date(post.created_at).toLocaleDateString()}</PostDescription>
                   <BookMarkIcon
-                    src={bookmarks[index] ? "/bookmark-on.png" : "/bookmark.png"}
-                    onClick={() => handleBookClick(index)}
+                    src={post.is_bookmarked ? "/bookmark-on.png" : "/bookmark.png"}
+                    onClick={() => handleBookClick(index, post.id)}
                   />
                 </PostItem>
               ))}
