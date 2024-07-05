@@ -4,12 +4,17 @@ import { useLocation, Link } from 'react-router-dom';
 import '../style.css';
 
 const HeaderContainer = styled.header`
+  background-color: var(--preset--color--base);
+  border-bottom: 1px solid var(--preset--color--contrast-2);
+`;
+
+const HeaderInner = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: var(--preset--color--base);
-  border-bottom: 1px solid var(--preset--color--contrast-2);
+  max-width: 1200px;
+  margin: auto;
 `;
 
 const Logo = styled.div`
@@ -18,7 +23,6 @@ const Logo = styled.div`
 
   img {
     height: 70px;
-    margin-left: 150px;
     cursor: pointer;
   }
 `;
@@ -72,35 +76,37 @@ const Header = () => {
 
   return (
     <HeaderContainer className={path || "main"}>
-      <Logo>
-        <Link to="/">
-          <img src="/logo.png" alt="Logo" />
-        </Link>
-      </Logo>
-      <Navigation>
-        <ul>
-          <li>
-            <Link to="/" className={path === "/" ? "active" : ""}>
-              홈
-            </Link>
-          </li>
-          <li>
-            <Link to="/search" className={path.startsWith('/search') ? "active" : ""}>
-              <img alt="search icon" src="/search_icon.png" />찾기
-            </Link>
-          </li>
-          <li>
-            <Link to="/posting" className={path === "/posting" || path.startsWith('/post') ? "active" : ""}>
-              포스팅
-            </Link>
-          </li>
-          <li>
-            <Link to={token ? "/mypage" : "/login"} className={path === "/mypage" || path === "/login" ? "active" : ""}>
-              {token ? "마이페이지" : "로그인"}
-            </Link>
-          </li>
-        </ul>
-      </Navigation>
+      <HeaderInner>
+        <Logo>
+          <Link to="/">
+            <img src="/logo.png" alt="Logo" />
+          </Link>
+        </Logo>
+        <Navigation>
+          <ul>
+            <li>
+              <Link to="/" className={path === "/" ? "active" : ""}>
+                홈
+              </Link>
+            </li>
+            <li>
+              <Link to="/search" className={path.startsWith('/search') ? "active" : ""}>
+                <img alt="search icon" src="/search_icon.png" />찾기
+              </Link>
+            </li>
+            <li>
+              <Link to="/posting" className={path === "/posting" || path.startsWith('/post') ? "active" : ""}>
+                포스팅
+              </Link>
+            </li>
+            <li>
+              <Link to={token ? "/mypage" : "/login"} className={path === "/mypage" || path === "/login" ? "active" : ""}>
+                {token ? "마이페이지" : "로그인"}
+              </Link>
+            </li>
+          </ul>
+        </Navigation>
+      </HeaderInner>
     </HeaderContainer>
   );
 };
