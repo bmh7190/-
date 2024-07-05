@@ -310,14 +310,6 @@ const MyPage = () => {
           console.log(e);
         });
 
-      // axiosInstance
-      //    .get(/comments)
-      //     .then(res => {
-      //         setMyComment(res.data);
-      //     })
-      //     .catch(e => {
-      //         console.log(e);
-      //     });
     }
   }, [navigate]);
   const handlePostClick = (postId) => {
@@ -419,11 +411,11 @@ const MyPage = () => {
               {MyBookMark.length > 0 ? (
                 MyBookMark.map((post) => (
                   <ListPostBox
-                    key={post.id}
+                    key={post.post.id}
                     onClick={() => handlePostClick(post.id)}
                   >
-                    <p>{post.title}</p>
-                    <PostDate>{post.date}</PostDate>
+                    <p>{post.post.title}</p>
+                    <PostDate>{post.post.date}</PostDate>
                   </ListPostBox>
                 ))
               ) : (
