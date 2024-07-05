@@ -280,7 +280,13 @@ const MyPage = () => {
 
     useEffect(() => {
         axios
-          .get(`${API_BASE_URL}/blog/posts?isMine=true`)
+          .get(`${API_BASE_URL}/blog/posts?isMine=true`,{
+            params: {
+                isMine: true,
+                SortBy: 'latest',
+                PerPages: 10,
+              }
+          })
           .then(res => {
             setMyPosts(res.data);
           })
@@ -401,36 +407,48 @@ const MyPage = () => {
               <BookMarkBox>
                   {activeTab === 'bookmarks' && (
                       <ContentsList>
-                          {MyBookMark.map((post) => (
+                          {MyBookMark.length > 0 ? (
+                          MyBookMark.map((post) => (
                               <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
                                   <p>{post.title}</p>
                                   <PostDate>{post.date}</PostDate>
                               </ListPostBox>
-                          ))}
+                          ))): (
+                            <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+                          )
+                          }
                       </ContentsList>
                   )}
                   {activeTab === 'comments' && (
                       <ContentsList>
-                          {MyComment.map((comment) => (
+                          {MyComment.length > 0 ? (
+                          MyComment.map((comment) => (
                               <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
                                   <p>{comment.title}</p>
                                   <p>{comment.comments}</p>
                                   <PostDate>{comment.date}</PostDate>
                               </ListPostBox>
-                          ))}
+                          ))): (
+                            <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+                          )
+                        }
                       </ContentsList>
                   )}
               </BookMarkBox>
           </ProfileCardContainer>
           <PostContainer>
               <PostContainerTitle>내가 쓴 글 살펴보기</PostContainerTitle>
-              {MyPosts.map(post => (
+              {MyPosts.length > 0 ? (
+              MyPosts.map(post => (
                   <PostCardBox 
                   key={post.id} onClick={() => handlePostClick(post.id)}>
                       <PostCardTitle>{post.title}</PostCardTitle> 
                       <PostDate>{post.date}</PostDate>
                   </PostCardBox>
-              ))}
+              ))): (
+                <div>No posts found</div> // 조건을 만족하지 않을 때 렌더링할 내용
+              )
+            }
           </PostContainer>
       </ProfileContainer>
   );
