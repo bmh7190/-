@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import queryString from 'query-string';
+import { API_BASE_URL } from '../config';
 
 const Container = styled.div`
   display: flex;
@@ -11,11 +13,11 @@ const Container = styled.div`
 `;
 
 const TitleWrap = styled.div`
-position: relative;
-    display: flex;
-    align-items: center;
-    width: 300px;
-    justify-content: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 300px;
+  justify-content: center;
 `;
 
 const Title = styled.h1`
@@ -116,38 +118,21 @@ const BackButton = styled(Link)`
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const queryParams = queryString.parse(location.search);
+    const { access, refresh } = queryParams;
+    
+    if (access && refresh) {
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
+      navigate('/');
+    }
+  }, [location, navigate]);
 
   const handleGoogleLogin = () => {
-    const googleLoginUrl = 'http://solver.r-e.kr/users/google/login';
-    const newWindow = window.open(googleLoginUrl, '_blank', 'width=500,height=600');
-  
-    const interval = setInterval(() => {
-      if (newWindow.closed) {
-        clearInterval(interval);
-        // 부모 창에서 데이터를 가져올 수 있다면 처리
-        if (window.handleGoogleLoginResponse) {
-          window.handleGoogleLoginResponse();
-        }
-      }
-    }, 1000);
-  };
-
-  // 메인 페이지에서 응답 데이터를 받아 쿠키를 설정하는 함수
-  window.handleGoogleLoginResponse = async () => {
-    try {
-      const response = await fetch('http://solver.r-e.kr/users/google/callback/');
-      const data = await response.json();
-      if (data.token) {
-        document.cookie = `accessToken=${data.token.access}; path=/; secure; samesite=None`;
-        document.cookie = `refreshToken=${data.token.refresh}; path=/; secure; samesite=None`;
-        // 필요한 추가 처리 (예: 사용자 정보 저장, 페이지 리프레시 등)
-        console.log('로그인 성공:', data);
-      } else {
-        console.error('로그인 실패:', data);
-      }
-    } catch (error) {
-      console.error('로그인 처리 중 오류 발생:', error);
-    }
+    window.location.href = `${API_BASE_URL}/users/google/login`;
   };
 
   return (

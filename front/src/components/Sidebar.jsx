@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import '../style.css';
 
 const SidebarContainer = styled.div`
@@ -94,36 +96,80 @@ const PostItem = styled.div`
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/posting')
-  };
+  const [userProfile, setUserProfile] = useState(null);
+  const [myPosts, setMyPosts] = useState([]);
 
-  const myPosts = [
-    { id: 1, title: '작성한 글 제목 1', date: '24.00.00' },
-    { id: 2, title: '작성한 글 제목 2', date: '24.00.00' },
-    { id: 3, title: '작성한 글 제목 3', date: '24.00.00' },
-  ];
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+        const response = await axios.get(`${API_BASE_URL}/users/profile/${userId}/`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
+        setUserProfile(response.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    const fetchMyPosts = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
+          params: {
+            isMine: true,
+            PerPages: 3,
+            PageNum: 1,
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
+        setMyPosts(response.data.posts || []);
+      } catch (error) {
+        console.error('Error fetching my posts:', error);
+      }
+    };
+
+    fetchProfile();
+    fetchMyPosts();
+  }, []);
+
+  const handleClick = () => {
+    navigate('/posting');
+  };
 
   return (
     <SidebarContainer>
       <WidgetWrap className='my-profile-widget'>
-        <UserProfile>
-            <UserProfileImg />
-            <UserTitle>
-                <UserName>닉네임</UserName>
-                <UserEmail>example@gmail.com</UserEmail>
-            </UserTitle>
-        </UserProfile>
-        <UserStats>게시글 작성: 20회</UserStats>
-        <UserStats>댓글 작성: 20회</UserStats>
-        <PostButton onClick={handleClick}>글쓰기</PostButton>
+        {userProfile ? (
+          <>
+            <UserProfile>
+              <UserProfileImg src={userProfile.profile_image || '/default_profile.png'} />
+              <UserTitle>
+                <UserName>{userProfile.nickname || '닉네임'}</UserName>
+                <UserEmail>{userProfile.email}</UserEmail>
+              </UserTitle>
+            </UserProfile>
+            <UserStats>게시글 작성: {userProfile.post_count || 0}회</UserStats>
+            <UserStats>댓글 작성: {userProfile.comment_count || 0}회</UserStats>
+            <PostButton onClick={handleClick}>글쓰기</PostButton>
+          </>
+        ) : (
+          <div>Loading...</div>
+        )}
       </WidgetWrap>
       <WidgetWrap className='my-posts-widget'>
         <h3>내가 작성한 글</h3>
         <PostList>
-            {myPosts.map(post => (
-            <PostItem key={post.id}>{post.title} <br /><span>{post.date}</span></PostItem>
-            ))}
+          {myPosts.length > 0 ? (
+            myPosts.map(post => (
+              <PostItem key={post.id}>{post.title} <br /><span>{post.created_at}</span></PostItem>
+            ))
+          ) : (
+            <div>작성한 글이 없습니다.</div>
+          )}
         </PostList>
       </WidgetWrap>
     </SidebarContainer>

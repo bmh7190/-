@@ -68,6 +68,8 @@ const Navigation = styled.nav`
 const Header = () => {
   const location = useLocation();
   const path = location.pathname;
+  const token = localStorage.getItem('accessToken');
+
   return (
     <HeaderContainer className={path || "main"}>
       <Logo>
@@ -93,8 +95,8 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <Link to="/mypage" className={path === "/mypage" ? "active" : ""}>
-              마이페이지
+            <Link to={token ? "/mypage" : "/login"} className={path === "/mypage" || path === "/login" ? "active" : ""}>
+              {token ? "마이페이지" : "로그인"}
             </Link>
           </li>
         </ul>
