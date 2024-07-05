@@ -176,6 +176,7 @@ const PostComment = () => {
           headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           },
+          user: localStorage.getItem('userID'), 
           post_id: postId, 
           content: newComment 
         }
