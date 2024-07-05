@@ -305,4 +305,4 @@ const Posting = () => {
   );
 };
 
-export default Posting
+export default Posting;
