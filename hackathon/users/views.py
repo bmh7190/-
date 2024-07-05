@@ -89,7 +89,7 @@ class ProfileList(APIView):
 class ProfileDetail(APIView):
     def pk_return(self, user_pk):
         # User 모델에서 pk를 사용하여 Profile을 찾는다
-        user = get_object_or_404(Profile, id=user_pk)
+        user = get_object_or_404(User, id=user_pk)
         profile = get_object_or_404(Profile, user=user)
         return profile.pk
 
