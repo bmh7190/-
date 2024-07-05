@@ -5,7 +5,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from .models import Tag, Post, Comment, Bookmark
-from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer
+from .serializers import TagSerializer, PostSerializer, CommentSerializer,BookmarkSerializer,CommentSerializer2
 from users.models import User
 
 from rest_framework.decorators import api_view, permission_classes,APIView
@@ -204,7 +204,7 @@ class CommentDetail(APIView):
 
     def post(self, request):
         user = request.user if request.user.is_authenticated else None
-        serializer = CommentSerializer(data=request.data)
+        serializer = CommentSerializer2(data=request.data)
         if serializer.is_valid():
             post_id = serializer.validated_data['post_id']
             content = serializer.validated_data['content']
@@ -234,7 +234,7 @@ class CommentDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        # 삭제할 댓글 아이디 요청 받기
+        user = request.user if request.user.is_authenticated else None
         comment_id = request.comment_id
         comment = get_object_or_404(Comment, pk=comment_id)
         comment.delete()
