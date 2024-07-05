@@ -132,17 +132,45 @@ const MoreButton = styled.button`
   }
 `;
 
-const SortButton = styled.button`
+const SortButton = styled.div`
+  position: relative;
+  cursor: pointer;
+`;
+
+const SortLabel = styled.button`
   padding: 6px 20px;
   font-size: 14px;
-  cursor: pointer;
   background-color: #B5B5B4;
   color: #333;
   border: 1px solid #ccc;
   border-radius: 5px;
+`;
+
+const SortDropdown = styled.div`
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+`;
+
+const SortItem = styled.button`
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: ${({ isSelected }) => (isSelected ? '#ddd' : 'transparent')};
+  cursor: pointer;
+  border: none;
+  text-align: left;
 
   &:hover {
-    background-color: #ddd;
+    background-color: #f0f0f0;
   }
 `;
 
@@ -157,6 +185,8 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
+  const [sortBy, setSortBy] = useState('latest');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -216,6 +246,15 @@ const MainPage = () => {
     navigate('/search');
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const selectSortOption = (option) => {
+    setSortBy(option);
+    setDropdownOpen(false);
+  };
+
   return (
     <MContainer>
       <ContentContainer>
@@ -234,7 +273,19 @@ const MainPage = () => {
           <PostsContainer>
             <PostsHeader>
               <Post>오늘의 글</Post>
-              <SortButton>최신순 ▼</SortButton>
+              <SortButton>
+                <SortLabel onClick={toggleDropdown}>
+                  {sortBy === 'latest' ? '최신순 ▼' : '관련도순 ▼'}
+                </SortLabel>
+                <SortDropdown isOpen={dropdownOpen}>
+                  <SortItem isSelected={sortBy === 'latest'} onClick={() => selectSortOption('latest')}>
+                    최신순
+                  </SortItem>
+                  <SortItem isSelected={sortBy === 'relevance'} onClick={() => selectSortOption('relevance')}>
+                    관련도순
+                  </SortItem>
+                </SortDropdown>
+              </SortButton>
             </PostsHeader>
             <PostList>
               {posts.map((post, index) => (
