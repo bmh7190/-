@@ -86,6 +86,7 @@ const EmailLogin = () => {
 
       localStorage.setItem('accessToken', response.data.access_token);
       localStorage.setItem('refreshToken', response.data.refresh_token);
+      localStorage.setItem('userID', response.data.uid);
       alert('로그인이 완료되었습니다!');
       navigate('/');  // Redirect to root after successful login
     } catch (error) {
