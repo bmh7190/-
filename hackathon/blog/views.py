@@ -121,7 +121,9 @@ class PostList(APIView):
 
     def post(self, request):
         user_id = request.data.get('user_id')
+        tag_id = request.data.get('tag_id'),
         user= get_object_or_404(User, pk =user_id)
+        tag = get_object_or_404(Tag, pk = tag_id)
         
         post = Post(
         title = request.data.get('title'),
@@ -129,7 +131,7 @@ class PostList(APIView):
         number = request.data.get('number') ,
         link = request.data.get('link') ,
         public = request.data.get('public'), 
-        tag = request.data.get('tag'),
+        tag = tag,
         user = user
         )
 
