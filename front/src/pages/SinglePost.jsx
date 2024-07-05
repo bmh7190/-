@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import axios from 'axios';
-import { API_BASE_URL } from '../config';
+import axiosInstance from '../utils/axiosInstance';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 
 const Container = styled.div`
   max-width: 800px;
@@ -27,9 +28,9 @@ const PostHeader = styled.div`
 `;
 
 const BackButton = styled(Link)`
-    font-size: 24px;
-    text-decoration: none;
-    color: black;
+  font-size: 24px;
+  text-decoration: none;
+  color: black;
 `;
 
 const AuthorProfileImg = styled.img`
@@ -67,11 +68,11 @@ const BookMarkIcon = styled.img`
 `;
 
 const PostContent = styled.div`
-    width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    min-height: 300px;
-    box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  min-height: 300px;
+  box-sizing: border-box;
 `;
 
 const Attachment = styled.div`
@@ -91,44 +92,44 @@ const Attachment = styled.div`
 `;
 
 const PostControlBox = styled.div`
-    margin-top: 20px;
-    background-color: #F5FDFF;
-    width: 100%;
-    box-shadow: 0px 12px 16px 0 #888;
-    box-sizing: border-box;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    border-top: 1px solid var(--preset--color--contrast-2);
-    text-align: -webkit-center;
+  margin-top: 20px;
+  background-color: #F5FDFF;
+  width: 100%;
+  box-shadow: 0px 12px 16px 0 #888;
+  box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  border-top: 1px solid var(--preset--color--contrast-2);
+  text-align: -webkit-center;
 `;
 
 const PostcontrolBoxInner = styled.div`
-    display: flex;
-    max-width: 1200px;
-    padding: 10px 20px;
-    gap: 40px;
+  display: flex;
+  max-width: 1200px;
+  padding: 10px 20px;
+  gap: 40px;
 `;
 
 const LikeWrap = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    & img {
-      width: 20px;
-      height: 20px;
-    }
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  & img {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const CommentButtonWrap = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    & img {
-      width: 25px;
-      height: 25px;
-    }
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  & img {
+    width: 25px;
+    height: 25px;
+  }
 `;
 
 const SinglePost = () => {
@@ -142,11 +143,11 @@ const SinglePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/posts/${postId}/`);
+        const response = await axiosInstance.get(`/blog/posts/${postId}/`);
         setPost(response.data);
+        setLoading(false);
       } catch (err) {
         setError(err);
-      } finally {
         setLoading(false);
       }
     };
@@ -157,7 +158,7 @@ const SinglePost = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/comments?postId=${postId}`);
+        const response = await axiosInstance.get(`/blog/comments?postId=${postId}`);
         setCommentCount(response.data.length);
       } catch (error) {
         console.error('Failed to fetch comments:', error);
@@ -166,6 +167,14 @@ const SinglePost = () => {
 
     fetchComments();
   }, [postId]);
+
+  useEffect(() => {
+    if (post) {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+      });
+    }
+  }, [post]);
 
   const handleCommentClick = () => {
     navigate(`/post/${postId}/comments`);
