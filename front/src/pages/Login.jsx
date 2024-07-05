@@ -116,6 +116,16 @@ const BackButton = styled(Link)`
   cursor: pointer;
 `;
 
+// Function to decode JWT
+const decodeJWT = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -125,8 +135,11 @@ const Login = () => {
     const { access, refresh } = queryParams;
 
     if (access && refresh) {
+      const decodedToken = decodeJWT(access);
+
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
+      localStorage.setItem('userID', decodedToken.user_id);  // Assuming 'user_id' is the key in the token payload
       navigate('/');
     }
   }, [location, navigate]);

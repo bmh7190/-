@@ -64,6 +64,16 @@ const BackButton = styled(Link)`
   cursor: pointer;
 `;
 
+// Function to decode JWT
+const decodeJWT = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+};
+
 const EmailLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -84,9 +94,12 @@ const EmailLogin = () => {
         }
       });
 
-      localStorage.setItem('accessToken', response.data.access_token);
-      localStorage.setItem('refreshToken', response.data.refresh_token);
-      localStorage.setItem('userID', response.data.uid);
+      const { access_token, refresh_token } = response.data;
+      const decodedToken = decodeJWT(access_token);
+
+      localStorage.setItem('accessToken', access_token);
+      localStorage.setItem('refreshToken', refresh_token);
+      localStorage.setItem('userID', decodedToken.user_id);  // Assuming 'uid' is the key in the token payload
       alert('로그인이 완료되었습니다!');
       navigate('/');  // Redirect to root after successful login
     } catch (error) {
