@@ -194,6 +194,7 @@ const SearchResults = () => {
         params: {
           SearchTerm: searchTerm,
           SortBy: filterValue,
+          PerPages: 10,
         },
       });
       setPosts(response.data.posts || []);
