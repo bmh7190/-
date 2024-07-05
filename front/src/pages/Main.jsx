@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const MContainer = styled.div`
   display: flex;
@@ -155,13 +157,12 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
-  
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('http://solver.r-e.kr/blog/posts');
-        const data = await response.json();
-        setPosts(data.posts || []);
+        const response = await axios.get('http://solver.r-e.kr/blog/posts');
+        setPosts(response.data.posts || []);
       } catch (error) {
         console.error('Error fetching posts:', error);
         setPosts([]);
@@ -172,13 +173,12 @@ const MainPage = () => {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
-          const response = await fetch('http://solver.r-e.kr/bookmarks', {
+          const response = await axios.get(`${API_BASE_URL}/bookmarks`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
-          const result = await response.json();
-          setBookmarks(result.bookmarks || []);
+          setBookmarks(response.data.bookmarks || []);
         } catch (error) {
           console.error('북마크 가져오기 실패', error);
         }
@@ -201,19 +201,17 @@ const MainPage = () => {
     setBookmarks(newBookmarks);
 
     try {
-      await fetch('http://solver.r-e.kr/bookmarks', {
-        method: 'POST',
+      await axios.post('http://solver.r-e.kr/bookmarks', { bookmarks: newBookmarks }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ bookmarks: newBookmarks }),
       });
     } catch (error) {
       console.error('북마크 업데이트', error);
     }
   };
-  
+
   const handleClick = () => {
     navigate('/search');
   };
@@ -263,4 +261,3 @@ const MainPage = () => {
 };
 
 export default MainPage;
-

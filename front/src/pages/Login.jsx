@@ -123,7 +123,7 @@ const Login = () => {
   useEffect(() => {
     const queryParams = queryString.parse(location.search);
     const { access, refresh } = queryParams;
-    
+
     if (access && refresh) {
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
