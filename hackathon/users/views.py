@@ -57,7 +57,12 @@ def login(request):
     update_last_login(None, user)
 
     return Response({'refresh_token': str(refresh),
-                     'access_token': str(refresh.access_token), }, status=status.HTTP_200_OK)
+                     'access_token': str(refresh.access_token),
+                    'user':user.pk }, status=status.HTTP_200_OK)
+
+
+
+
 @api_view(['GET'])
 def logout(request):
     response = Response({
@@ -154,6 +159,7 @@ def google_callback(request):
         res = JsonResponse(
             {
                 "user": user_serializer.data,
+                "uid":user.pk,
                 "message": "login successs",
                 "token": {
                     "access": access_token,
@@ -180,6 +186,7 @@ def google_callback(request):
             {
                 "user": user_serializer.data,
                 "message": "register successs",
+                "uid":user.pk,
                 "token": {
                     "access": access_token,
                     "refresh": refresh_token,
@@ -250,6 +257,7 @@ def kakao_callback(request):
         res = JsonResponse(
             {
                 "user": user_serializer.data,
+                "uid":user.pk,
                 "message": "login successs",
                 "token": {
                     "access": access_token,
@@ -275,6 +283,7 @@ def kakao_callback(request):
             {
                 "user": user_serializer.data,
                 "message": "register successs",
+                "uid":user.pk,
                 "token": {
                     "access": access_token,
                     "refresh": refresh_token,
@@ -375,6 +384,7 @@ def naver_callback(request):
             {
                 "user": user_serializer.data,
                 "message": "login successs",
+                "uid":user.pk,
                 "token": {
                     "access": access_token,
                     "refresh": refresh_token,
@@ -399,6 +409,7 @@ def naver_callback(request):
             {
                 "user": user_serializer.data,
                 "message": "register successs",
+                "uid":user.pk,
                 "token": {
                     "access": access_token,
                     "refresh": refresh_token,
