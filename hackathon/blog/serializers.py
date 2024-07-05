@@ -21,6 +21,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BookmarkSerializer(serializers.ModelSerializer):
+    post =PostSerializer()
     class Meta:
         model = Bookmark
         fields = '__all__'
