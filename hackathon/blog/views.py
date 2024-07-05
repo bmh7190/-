@@ -110,7 +110,7 @@ class PostList(APIView):
             for post_data in serialized_data:
                 post_id = post_data['id']
                 post_data['is_bookmarked'] = Bookmark.objects.filter(user=user, post_id=post_id).exists()
-                post_data['is_mine'] = post_list.filter(pk=post_id, author=user).exists()
+                post_data['is_mine'] = post_list.filter(pk=post_id, user=user).exists()
 
         #총 페이지수, 전체 게시물 수
         return Response({
