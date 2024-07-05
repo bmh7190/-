@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const Container = styled.div`
   display: flex;
@@ -11,11 +13,11 @@ const Container = styled.div`
 `;
 
 const TitleWrap = styled.div`
-position: relative;
-    display: flex;
-    align-items: center;
-    width: 300px;
-    justify-content: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 300px;
+  justify-content: center;
 `;
 
 const Title = styled.h1`
@@ -105,29 +107,25 @@ const RegisterForm = () => {
       return;
     }
 
-    const data = {
-      name: name,
-      email: email,
-      password: password,
-    };
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    if (profileImage) {
+      formData.append('profile_image', profileImage);
+    }
 
     try {
-      const response = await fetch('http://solver.r-e.kr/users/signup', {
-        method: 'POST',
+      const response = await axios.post(`${API_BASE_URL}/users/signup`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response status:', response.status);
-        console.error('Response text:', errorText);
+      if (response.status !== 201) {
         throw new Error('Network response was not ok');
       }
 
-      const result = await response.json();
       alert('회원가입이 완료되었습니다!');
       navigate('/login');  // Redirect to login page after successful registration
     } catch (error) {
@@ -139,12 +137,12 @@ const RegisterForm = () => {
   return (
     <Container>
       <TitleWrap>
-        <BackButton onClick={() => navigate(-1)}>←</BackButton>
+        <BackButton to="#" onClick={() => navigate(-1)}>←</BackButton>
         <Title>회원가입</Title>
       </TitleWrap>
       <Form onSubmit={handleSubmit}>
         <Input
-          type="name"
+          type="text"
           placeholder="닉네임"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -165,7 +163,7 @@ const RegisterForm = () => {
           required
         />
         <Input
-          type="passwordcheck"
+          type="password"
           placeholder="비밀번호 확인"
           value={passwordcheck}
           onChange={(e) => setPasswordCheck(e.target.value)}
