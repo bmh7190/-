@@ -207,9 +207,8 @@ class CommentDetail(APIView):
         if user is None:
             return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
         
-        post_id = request.data.get('post_id')
-        content = request.data.get('content')
-        print(content)
+        post_id = request.GET.get('post_id')
+        content = request.GET.get('content')
 
         if not post_id or not content:
             return Response({'detail': 'post_id and content are required'}, status=status.HTTP_400_BAD_REQUEST)
