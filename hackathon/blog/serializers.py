@@ -24,11 +24,3 @@ class BookmarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bookmark
         fields = '__all__'
-
-class CommentSerializer2(serializers.Serializer):
-    user = serializers.ReadOnlyField(source='user.username')
-    post_id = serializers.IntegerField(write_only=True)  # post_id를 write-only 필드로 추가합니다.
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post_id']
