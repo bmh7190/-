@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { API_BASE_URL } from '../config';
 
 const Container = styled.div`
@@ -77,24 +78,14 @@ const EmailLogin = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
-        method: 'POST',
+      const response = await axios.post(`${API_BASE_URL}/users/login`, data, {
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        }
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response status:', response.status);
-        console.error('Response text:', errorText);
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      localStorage.setItem('accessToken', result.access_token);
-      localStorage.setItem('refreshToken', result.refresh_token);
+      localStorage.setItem('accessToken', response.data.access_token);
+      localStorage.setItem('refreshToken', response.data.refresh_token);
       alert('로그인이 완료되었습니다!');
       navigate('/');  // Redirect to root after successful login
     } catch (error) {
