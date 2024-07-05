@@ -65,7 +65,7 @@ const ImgButton = styled.button`
 `;
 
 const LogOutButton = styled.button`
-     width: 70px;
+    width: 70px;
     height: 20px;
     margin-top: 15px;
     border-radius: 50px;
@@ -280,7 +280,7 @@ const MyPage = () => {
 
     useEffect(() => {
         axios
-          .get('내가 작성한 게시물')
+          .get(`${API_BASE_URL}/blog/posts?isMine=true`)
           .then(res => {
             setMyPosts(res.data);
           })
@@ -291,138 +291,145 @@ const MyPage = () => {
 
     useEffect(() => {
         axios
-          .get('북마크한 게시물')
+          .get(`${API_BASE_URL}/bookmarks`)
           .then(res => {
             setMyBookMark(res.data);
-          })
-          .catch(e => {
-            console.log(e);
-          });
-    }, []);  
-
-    useEffect(() => {
-        axios
-          .get('작성한 댓글')
-          .then(res => {
-            setMyComment(res.data);
-          })
-          .catch(e => {
-            console.log(e);
-          });
-    }, []);  
-
-    const handlePostClick = (postId) => {
-        navigate(`/Post/${postId}`);
-    };
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleSaveClick = () => {
-        setUserName(newUserName);
-        setIsEditing(false);
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setSelectedImage(URL.createObjectURL(file));
-        }
-    };
-
-    const handleButtonClick = () => {
-        document.getElementById('file').click();
-    };
-
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
-
-    const handleLogoutClick = () => {
-        navigate('/Login');
-    };
-
-    return (
-        <ProfileContainer>
-            <ProfileCardContainer>
-                <ProfileBox>
-                    <ImgBox>
-                        <ProfileImg src={selectedImage} alt=" " />
-                        <ImgButtonBox>
-                        <ImgButton onClick={handleButtonClick}>사진 수정</ImgButton>
-                        <HiddenFileInput
-                            type="file"
-                            id="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
-                        </ImgButtonBox>
-                    </ImgBox>
-                    <TextBox>
-                        <NameBox>
-                            <ButtonBox>
-                                {isEditing ? (
-                                    <UserNameInput 
-                                    value={newUserName} onChange={(e) => setNewUserName(e.target.value)}/>
-                                ) : ( <UserName>{userName}</UserName>)}
-                                {isEditing ? (
-                                    <NameBuuton2 onClick={handleSaveClick}>완료</NameBuuton2>
-                                ) : ( <NameButton1 onClick={handleEditClick}>수정</NameButton1> )}
-                            </ButtonBox>
-                        </NameBox>
-                        <UserEmail>example@gmail.com</UserEmail>
-                        <UserState>글 작성 : 20회</UserState>
-                        <UserState>댓글 작성 : 20회</UserState>
-                        <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
-                    </TextBox>
-                </ProfileBox>
-                    <ButtonBox2>
-                        <BookMarkButton 
-                            isActive={activeTab === 'bookmarks'} onClick={() => handleTabClick('bookmarks')}>
-                            북마크한 글
-                        </BookMarkButton>
-                        <CommentButton
-                            isActive={activeTab === 'comments'} onClick={() => handleTabClick('comments')}>
-                            내가 쓴 댓글
-                        </CommentButton>
-                    </ButtonBox2>
-                <BookMarkBox>
-                    {activeTab === 'bookmarks' && (
-                        <ContentsList>
-                            {MyBookMark.map((post) => (
-                                <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
-                                    <p>{post.title}</p>
-                                    <PostDate>{post.date}</PostDate>
-                                </ListPostBox>
-                            ))}
-                        </ContentsList>
-                    )}
-                    {activeTab === 'comments' && (
-                        <ContentsList>
-                            {MyComment.map((comment) => (
-                                <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
-                                    <p>{comment.title}</p>
-                                    <p>{comment.text}</p>
-                                    <PostDate>{comment.date}</PostDate>
-                                </ListPostBox>
-                            ))}
-                        </ContentsList>
-                    )}
-                </BookMarkBox>
-            </ProfileCardContainer>
-            <PostContainer>
-                <PostContainerTitle>내가 쓴 글 살펴보기</PostContainerTitle>
-                {MyPosts.map(post => (
-                    <PostCardBox 
-                    key={post.id} onClick={() => handlePostClick(post.id)}>
-                        <PostCardTitle>{post.title}</PostCardTitle> 
-                        <PostDate>{post.date}</PostDate>
-                    </PostCardBox>
-                ))}
-            </PostContainer>
-        </ProfileContainer>
-    );
+        })
+        .catch(e => {
+          console.log(e);
+        });
+  }, []);  
+  
+  useEffect(() => {
+      axios
+        .get(`${API_BASE_URL}/comments`)
+        .then(res => {
+          setMyComment(res.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+  }, []);  
+  
+  const handlePostClick = (postId) => {
+      navigate(`/Post/${postId}`);
+  };
+  
+  const handleEditClick = () => {
+      setIsEditing(true);
+  };
+  
+  const handleSaveClick = () => {
+      setUserName(newUserName);
+      setIsEditing(false);
+  };
+  
+  const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          setSelectedImage(URL.createObjectURL(file));
+      }
+  };
+  
+  const handleButtonClick = () => {
+      document.getElementById('file').click();
+  };
+  
+  const handleTabClick = (tab) => {
+      setActiveTab(tab);
+  };
+  
+  const handleLogoutClick = async () => {
+      try {
+          await axios.get(`${API_BASE_URL}/users/logout`, { withCredentials: true });
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/Login');
+      } catch (error) {
+          console.error('로그아웃 실패:', error);
+      }
+  };
+  
+  return (
+      <ProfileContainer>
+          <ProfileCardContainer>
+              <ProfileBox>
+                  <ImgBox>
+                      <ProfileImg src={selectedImage} alt=" " />
+                      <ImgButtonBox>
+                      <ImgButton onClick={handleButtonClick}>사진 수정</ImgButton>
+                      <HiddenFileInput
+                          type="file"
+                          id="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                      />
+                      </ImgButtonBox>
+                  </ImgBox>
+                  <TextBox>
+                      <NameBox>
+                          <ButtonBox>
+                              {isEditing ? (
+                                  <UserNameInput 
+                                  value={newUserName} onChange={(e) => setNewUserName(e.target.value)}/>
+                              ) : ( <UserName>{userName}</UserName>)}
+                              {isEditing ? (
+                                  <NameBuuton2 onClick={handleSaveClick}>완료</NameBuuton2>
+                              ) : ( <NameButton1 onClick={handleEditClick}>수정</NameButton1> )}
+                          </ButtonBox>
+                      </NameBox>
+                      <UserEmail>example@gmail.com</UserEmail>
+                      <UserState>글 작성 : 20회</UserState>
+                      <UserState>댓글 작성 : 20회</UserState>
+                      <LogOutButton onClick={handleLogoutClick}>로그아웃 </LogOutButton>
+                  </TextBox>
+              </ProfileBox>
+                  <ButtonBox2>
+                      <BookMarkButton 
+                          isActive={activeTab === 'bookmarks'} onClick={() => handleTabClick('bookmarks')}>
+                          북마크한 글
+                      </BookMarkButton>
+                      <CommentButton
+                          isActive={activeTab === 'comments'} onClick={() => handleTabClick('comments')}>
+                          내가 쓴 댓글
+                      </CommentButton>
+                  </ButtonBox2>
+              <BookMarkBox>
+                  {activeTab === 'bookmarks' && (
+                      <ContentsList>
+                          {MyBookMark.map((post) => (
+                              <ListPostBox key={post.id} onClick={() => handlePostClick(post.id)}>
+                                  <p>{post.title}</p>
+                                  <PostDate>{post.date}</PostDate>
+                              </ListPostBox>
+                          ))}
+                      </ContentsList>
+                  )}
+                  {activeTab === 'comments' && (
+                      <ContentsList>
+                          {MyComment.map((comment) => (
+                              <ListPostBox key={comment.id} onClick={() => handlePostClick(comment.id)}>
+                                  <p>{comment.title}</p>
+                                  <p>{comment.comments}</p>
+                                  <PostDate>{comment.date}</PostDate>
+                              </ListPostBox>
+                          ))}
+                      </ContentsList>
+                  )}
+              </BookMarkBox>
+          </ProfileCardContainer>
+          <PostContainer>
+              <PostContainerTitle>내가 쓴 글 살펴보기</PostContainerTitle>
+              {MyPosts.map(post => (
+                  <PostCardBox 
+                  key={post.id} onClick={() => handlePostClick(post.id)}>
+                      <PostCardTitle>{post.title}</PostCardTitle> 
+                      <PostDate>{post.date}</PostDate>
+                  </PostCardBox>
+              ))}
+          </PostContainer>
+      </ProfileContainer>
+  );
 };
 
 export default MyPage;
