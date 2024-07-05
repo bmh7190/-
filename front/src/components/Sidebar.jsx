@@ -41,8 +41,8 @@ const UserProfile = styled.div`
 `;
 
 const UserProfileImg = styled.img`
-    width: 70px;
-    height: 70px;
+    width: 73px;
+    height: 73px;
 `;
 
 const UserTitle = styled.div`
