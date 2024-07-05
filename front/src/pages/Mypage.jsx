@@ -232,7 +232,7 @@ const PostCardTitle = styled.h2`
     font-weight: bold;
     margin: 0;
     cursor: pointer;
-    color: #525252
+    color: #525252;
 `;
 
 const PostDate = styled.p`
