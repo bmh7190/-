@@ -87,8 +87,17 @@ class ProfileList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileDetail(APIView):
-    def get(self, request, pk):
-        profile = get_object_or_404(Profile, pk=pk)
+    def pk_return(self, user_pk):
+        # User 모델에서 pk를 사용하여 Profile을 찾는다
+        user = get_object_or_404(Profile, id=user_pk)
+        profile = get_object_or_404(Profile, user=user)
+        return profile.pk
+
+    def get(self, request, user_pk):
+        # 사용자 pk를 받아서 pk_return을 호출
+        profile_pk = self.pk_return(user_pk)
+        # 찾아낸 Profile PK를 사용하여 프로필 객체를 가져옴
+        profile = get_object_or_404(Profile, pk=profile_pk)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
