@@ -102,7 +102,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+        const userId = localStorage.getItem('userID'); // Assuming userId is stored in localStorage
         const response = await axios.get(`${API_BASE_URL}/users/profiles/${userId}/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
