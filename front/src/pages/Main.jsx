@@ -89,7 +89,7 @@ const PostItem = styled.li`
   border: 1px solid #e9e9e9;
   padding: 10px;
   border-radius: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -191,7 +191,12 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/blog/posts`);
+        const response = await axios.get(`${API_BASE_URL}/blog/posts`, {
+            params: {
+              SortBy: sortBy,
+              PerPages: 3,
+          },
+        });
         setPosts(response.data.posts || []);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -203,7 +208,7 @@ const MainPage = () => {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
-          const response = await axios.get(`${API_BASE_URL}/bookmarks`, {
+          const response = await axios.get(`${API_BASE_URL}/bookmarks/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
