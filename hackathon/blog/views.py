@@ -126,7 +126,8 @@ class PostList(APIView):
         number = request.data.get('number') ,
         link = request.data.get('link') ,
         public = request.data.get('public'), 
-        tag = request.data.get('tag')
+        tag = request.data.get('tag'),
+        user = request.data.get('user_id')
         )
 
         post.save()
@@ -140,7 +141,7 @@ class PostDetail(APIView):
         if self.request.method == 'GET':
             return [AllowAny()]
         return [IsAuthenticated()]  # 기본 권한을 설정하거나 다른 권한 클래스를 설정합니다.
-
+    
 
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -242,6 +243,7 @@ class CommentDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+        comment_id = request.data
         comment = get_object_or_404(Comment, pk=pk)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
