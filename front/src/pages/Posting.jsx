@@ -202,8 +202,9 @@ const Posting = () => {
 
       const response = await axiosInstance.post('/blog/posts/', formData);
 
-      if (response.ok) {
-        navigate('/Posting');
+      if (response.status === 201) {
+        const postId = response.data; // assuming the response contains the post ID
+        navigate(`/post/${postId}`); // redirect to the post details page
       } else {
         console.error('포스트 등록 실패');
       }
